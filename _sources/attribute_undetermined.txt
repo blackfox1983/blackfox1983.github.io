@@ -1,0 +1,54 @@
+This is a Title
+===============
+That has a paragraph about a main subject and is set when the '='
+is at least the same length of the title itself.
+
+Subject Subtitle
+----------------
+Subtitles are set with '-' and are required to have the same length 
+of the subtitle itself, just like titles.
+
+Lists can be unnumbered like:
+
+ * 项目 Foo
+ * 项目 Bar
+
+Or automatically numbered:
+
+ #. Item 1
+ #. Item 2
+
+.. code-block:: python
+    :linenos:
+
+    def foo():
+        print "Love Python, Love FreeDome"
+        print "E文标点,.0123456789,中文标点,. "
+
+.. code-block:: c++
+    :linenos:
+
+    //注释
+    class A{
+        int i; /*注释*/
+        char j;
+        void f(){
+            if( i == 0){
+                print("\n");
+            }
+        }
+    }
+
+.. literalinclude:: code/my.sh
+    :language: shell
+    :linenos:
+
+.. literalinclude:: code/main.cpp
+    :language: cpp
+    :linenos:
+
+Inline Markup
+-------------
+Words can have *emphasis in italics* or be **bold** and you can define
+code samples with back quotes, like when you talk about a command: ``sudo`` 
+gives you super user powers!
