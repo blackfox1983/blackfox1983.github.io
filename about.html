@@ -84,41 +84,57 @@ BlackFox' Home            </a>
     <div class="row">
         <div class="col-sm-9">
             <!-- Custom For About-->
-            <button id="run_btn" onclick="run_program()">Run</button>
-            <textarea readonly="true" id="program_output" style="width: 100%; height:300px;"></textarea>
-            <script type="text/javascript">
-                data = ["Nothing",
-                        "Todo..."]
-                var cur = 0;
-                var x = 0;
-                var msg = "";
-                var timer_id;
-                function run_program(){
-                    if(cur == 0){
-                        document.getElementById("program_output").value = "";
-                    }
-                    document.getElementById("run_btn").disabled = true;
-                    var m = data[cur];
-                    document.getElementById("program_output").value = msg + m.substring(0, x++) + "_";
-                    if (x == m.length + 1) {
-                        x = 0;
-                        cur++;
-                        if (cur > data.length - 1) {
-                            cur = 0;
-                            x = 0;
-                            msg = "";
-                            document.getElementById("run_btn").disabled = false;
-                            clearTimeout(timer_id);
-                            return;
-                        }
-                        timer_id = setTimeout("run_program()", 500);
-                        msg += m + "\n";
-                    } else {
-                        setTimeout("run_program()", 50);
-                    }
-                }
-            </script>
+            <script src="/static/runcode.js"></script>
+            <a id="run_btn" onclick="show_output()">Want to Know More? Run the Code</a>
+            <br/>
+            <textarea readonly="true" id="program_src" rows="45" cols="80">
+/**********Save the code as C file and compile it with gcc4.8.2***************/
+#define _________(l,n,m,V,W,X,Y,Z,b,c,d,t,u,v,w,x,y,o,N,O,P,Q,R,H,I,J,K,L,M,S,\
+T,U,a,e,f,g,h)/*------------------------------------------------------------*/\
+                        R##a##y##m##o##n##d
+/*---------------------------------------------------------------------------*/
+#define  ________  _________(\
+                          H,a,c,k,e,r,s,:,\
+ H,e,r,o,e,s,     o,f,     t,h,e,     C,o,m,p,u,t,e,r,     R,e,v,o,l,u,t,i,o,n)
+/*---------------------------------------------------------------------------*/
+#define _______(B,C,D,E,F,G,H,I,Z,A,J,K,L,M,N,V,W,X,O,P,Q,R,S,T,U)    /******/\
+                            U##N##I##X
+/*---------------------------------------------------------------------------*/
+#define ______  _______(\
+            R,e,v,o,l,u,t,i,o,n,   O,p,e,r,a,t,i,n,g,   S,y,s,t,e,m)
+/*---------------------------------------------------------------------------*/
+______(_,__,___,____,_____)const char* _____;{!0<=_?______(0,0,0,/*************
+*******************************************************************************
+******************************************************************************/
+~-(unix<<-~~~+unix)["Show respect to the Best Hackers all over the world."],/**
+*******************************************************************************
+******************************************************************************/
+".J-JNJO_CMBDLGPY~C~S~Q~G!~C~M~G~=DPN_22~U~C~C~K~K~C~S~C~K~G_$IBOHQJOH~!%JTUSJ\
+DU_#FJKJOH~9~!$IJOB__&EVDBUJPO__.~=4~=~!BU~!$PMMFHF~!PG~!$PNQVUFS~!4DJFODF~!BO\
+E~!5FDIOPMPHZ~!BU~!6OJWFSTJUZ~!PG~!+JMJO~!~;~!$IBOHDIVO~9~!+JMJO_4FQUFNCFS~!~C\
+~9~!~E~A~A~O~!UP~!+VMZ~!~C~9~!~E~A~C~A_~;~!4UVEJFE~!UIFPSZ~!PG~!$PNQVUFS~!4DJF\
+ODF~9~!F~=H~=~!$PNQVUBCJMJUZ~!~-~!$PNQMFYJUZ_~;~!3FTFBSDIFE~!PG~!#PU/FU_~;~!%J\
+E~!1SPKFDUT~9~!F~=H~=~!8FC~9~!%FTLUPQ~!4PGUXBSFT~!PO~!~!8JOEPXT~!BOE~!4FSWFST~\
+!PO~!-JOVY__#~=4~=~!BU~!$PMMFHF~!PG~!$PNQVUFS~!4DJFODF~!BOE~!5FDIOPMPHZ~!BU~!6\
+OJWFSTJUZ~!PG~!+JMJO~!~;~!$IBOHDIVO~9~!+JMJO_4FQUFNCFS~!~C~9~!~E~A~A~E~!UP~!+V\
+MZ~!~C~9~!~E~A~A~M_~;~!\'PDVTFE~!PO~!UIF~!UIFPSZ~!PG~!$PNQVUFS~!4DJFODF_~;~!5B\
+VHIU~!NZTFMG~!/FUXPSL~!4FDVSJUZ~!BOE~!QSBDUJDF_~;~!1SPHSBNJOH~!PO~!+PK~1+J-JO~\
+!6OJWFSTJUZ~!0OMJOF~!+VEHF~!4ZTUFN~3__&NQMPZNFOU__3~-%~9~!#BJEV~9~!*OD~=~!~;~!\
+#FJKJOH_\"QSJM~!~C~G~9~!~E~A~C~C~!UP~!/PX_~;~!%FWFMPQFE~!TFWFSBM~!NPEVMFT~!BOE\
+~!MJCSBSJFT_~;~!1SPWJEFE~!EFTJHO~!XPSL~!GPS~!#BJEV~;4QJEFS~/T~!BOE~!8FC.BTUFS~\
+;1MBUGPSN~/T~!MBVODI__4PGUXBSF~!&OHJOFFS~9~!,JOHTPGU~9~!*OD~=~!~;~!%BMJBO~9~!-\
+JBPOJOH_+VOF~!~A~C~9~!~E~A~C~A~9~!UP~!.BSDI~!~E~K~9~!~E~A~C~C_~;~!%FWFMPQFE~!3\
+FBMN~;4FSWFS_~;~!.BJOUBJOFE~!MJCSBSJFT~1F~=H~=~!OFUXPSL~9~!EC~;RVFSZ~3~!SVOOJO\
+H~!JO~!BMM~!(BNF~;4FSWFST_"):(__[_____]!=0?___==1?(________((____+__[_____])>>1
+),______(0,__+1,!___,____,_____)):*(_____+__)=='_'?(________(012),______(0,__+1
+,___,____,_____)):*(__+_____)=='~'?______(0,__+1,!___,____,_____):(________(///
+____+*(__+_____)),______(0,__+1,___,____,_____)):/*============================
+===============================================================================
+                                           by blackfox*/ 2015-07-15-00-00-00);}
+/*****************************************************************************/
+        </textarea>
             <!-- End Custom -->
+
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
@@ -144,6 +160,11 @@ BlackFox' Home            </a>
 
     <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
       <ul class="list-group" id="links">
+        <li class="list-group-item">
+            <a href="http://linuxtools-rst.readthedocs.org/zh_CN/latest/" target="_blank">
+                LinuxToolsTutorial
+            </a>
+        </li>
         <li class="list-group-item">
             <a href="http://getpelican.com/" target="_blank">
                 Pelican

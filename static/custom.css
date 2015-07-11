@@ -6,33 +6,33 @@
    et alignement des colonnes en haut du tableau */
 
 .highlight pre {
-  background-color: #fdf6e3;
-  white-space: pre;
-  overflow-x: auto;
+    background-color: #fdf6e3;
+    white-space: pre;
+    overflow-x: auto;
 }
 
 
 .linenodiv pre {
-  white-space : pre;
-  overflow-x: auto
+    white-space : pre;
+    overflow-x: auto
 }
 
 
 .highlighttable {
-  table-layout: auto;
-  width:100%;
+    table-layout: auto;
+    width:100%;
 }
 
 tbody {
-	vertical-align: top
-	}
+    vertical-align: top
+}
 
 td.linenos {
-  width: 5%;
+    width: 5%;
 }
 
 td.code {
-  width: 95%;
+    width: 95%;
 }
 
 .well {
@@ -43,7 +43,8 @@ td.code {
 /* Modification du style des liens  */
 a {
 	color: inherit;
-	text-decoration:none
+	text-decoration:none;
+    cursor: url(/images/link.cur), default;
 }
 
 a:hover,
@@ -55,7 +56,7 @@ a:focus {
 /* Ajout d'un style pour le header  */
 
 .site-header {
-  margin-bottom:5px;
+    margin-bottom:5px;
 	border-bottom:1px solid #eee
 }
 
@@ -133,4 +134,90 @@ a.list-group-item:focus {
 .page-header:hover::before {
   visibility: visible;
   transform: scaleX(1);
+}
+
+body {
+  cursor: url(/images/no.cur),default;
+}
+
+.neat-dialog {
+  border-right: #555 1px solid;
+  border-top: #555 1px solid;
+  z-index: 99;
+  margin-left: auto;
+  border-left: #555 1px solid;
+  width: 50%;
+  margin-right: auto;
+  border-bottom: #555 1px solid;
+  position: relative;
+  top: 25%;
+  background-color: #000;
+}
+
+.neat-dialog-title {
+  padding-right: 0.3em;
+  padding-left: 0.3em;
+  padding-bottom: 7px;
+  margin: 0px;
+  line-height: 1.2em;
+  padding-top: 7px;
+  border-bottom: #444 1px solid;
+  position: relative;
+  background-color: #fff;
+}
+
+.neat-dialog-close {
+  right:10px;
+  position: absolute;
+  cursor: url(/images/link.cur), default;
+}
+
+#output_content {
+  font-family: Lucida Console;
+  font-size: 13px;
+  color: green;
+  margin-left: 10px;
+}
+
+#program_src {
+    resize: none;
+    font-family:Lucida Console;
+    font-size:13px;
+    color:#000;
+    background:transparent;
+    border-style:none;
+    cursor: url(/images/no.cur),default;
+}
+
+.neat-dialog-bg {
+  z-index: -1;
+  filter: alpha(opacity=70);
+  left: 0px;
+  width: 100%;
+  position: fixed;
+  top: 0px;
+  height: 100%;
+  background-color: #eee;
+  opacity: 0.7;
+}
+
+.neat-dialog-cont {
+  z-index: 98;
+  background: none transparent scroll repeat 0% 0%;
+  left: 0px;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  height: 100%;
+  overflow: auto;
+}
+
+#run_btn{
+  float: center;
+  width: 250px;
+  display: block;
+  text-align: center;
+  border: solid 1px #dedede;
+  background-color: #f5f5f5;
+  color: #333;
 }
