@@ -30,8 +30,6 @@
     <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
         <link href="/static/custom.css" rel="stylesheet">
 
-        <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate"
-              title="BlackFox' Home ATOM Feed"/>
 
 
 
@@ -55,6 +53,9 @@ BlackFox' Home            </a>
             <ul class="nav navbar-nav">
                     <li><a href="http://blackfox1983.github.io/">首页</a></li>
                     <li><a href="/about.html">关于</a></li>
+                        <li >
+                            <a href="/category/ji-zhu.html">技术</a>
+                        </li>
                         <li >
                             <a href="/category/sui-bi.html">随笔</a>
                         </li>
@@ -86,6 +87,18 @@ BlackFox' Home            </a>
     <section id="categories">
         <h1>All Categories for BlackFox' Home</h1>
         <div class="panel-group" id="accordion">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse-ji-zhu">技术 <span class="badge pull-right">1</span></a>
+                    </h4>
+                </div>
+                <div id="collapse-ji-zhu" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <p><span class="categories-timestamp"><time datetime="2015-07-11T13:00:00+08:00">2015-07-11 13:00:00</time></span> <a href="/posts/2015/7月/11/how-to-obfuscate-c-code/">怎么混淆C代码</a></p>
+                    </div>
+                </div>
+            </div>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title">
@@ -126,8 +139,13 @@ BlackFox' Home            </a>
 
 
 
-            <li class="list-group-item"><a href="/"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+            <li class="list-group-item"><a href="/tags.html"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
                 <ul class="list-group " id="tags">
+                    <li class="list-group-item tag-3">
+                        <a href="/tag/iocccdai-ma-hun-yao.html">
+                            IOCCC，代码混淆
+                        </a>
+                    </li>
                 </ul>
             </li>
 
