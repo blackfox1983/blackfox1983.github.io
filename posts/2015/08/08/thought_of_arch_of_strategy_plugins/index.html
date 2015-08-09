@@ -112,6 +112,10 @@ BlackFox' Home            </a>
     <span class="published">
         <i class="fa fa-calendar"></i><time datetime="2015-08-08T20:36:00+08:00"> 2015-08-08 20:36:00</time>
     </span>
+            <span class="label label-default">Modified</span>
+            <span class="modified">
+                <i class="fa fa-calendar"></i><time datetime="2015-08-09T13:50:00+08:00"> 2015-08-09 13:50:00</time>
+            </span>
 
 
             <span class="label label-default">By</span>
@@ -177,11 +181,23 @@ BlackFox' Home            </a>
 即在编译libpolicy.so的同时，也编译发布一个同等版本的libpolicy.a，其后在sample（使用libpolicy进行编译开发的可运行模块）中先使用libpolicy.a进行编译链接，若编译出来的文件可运行，则对应的 <cite>-L</cite> 以及 <cite>-l</cite> 参数为对应so在链接时需要使用的参数。方法虽然很ugly，但是还是很有效的。</p>
 <p>到这里，千万不要以为so的问题没了，还有……若liba.a中有一个全局对象（如extern声明的对象，该对象在析构时会做资源释放， 如 <cite>free</cite> ）。且libpolicy.so和主模块中均依赖了liba.a，那么在模块退出时，就会出core，提示 <cite>double free...</cite> 。解决办法，链接时增加 <cite>-Bsymbolic</cite> 参数，即 <cite>g++ -shared -Wl,-Bsymbolic</cite> 。</p>
 <p>最后，几个lib插件的点：</p>
-<ol class="arabic simple">
-<li>编译so时候，需要依赖的所有libx.a均使用-fPIC编译发布。</li>
-<li>X模块提供给策略的接口往往是一个基类的虚函数，具体策略继承该接口重写逻辑。实际调用时，X模块通过lib插件获得这个基类的一个对象，进行多线程环境下的调用，因此需要策略所写的逻辑需要保证线程安全。这个对于天天做数据策略分析的同学来说，增加了不必要的负担。</li>
-<li>插件热插拔。静态库就不要考虑吧……动态库，据说是可以的，但是也需要好好调研下。（不管怎么说，维护复杂度加了）</li>
-</ol>
+<ul>
+<li><p class="first">编译so时候，需要依赖的所有libx.a均使用-fPIC编译发布。</p>
+</li>
+<li><p class="first">X模块提供给策略的接口往往是一个基类的虚函数，具体策略继承该接口重写逻辑。实际调用时，X模块通过lib插件获得这个基类的一个对象，进行多线程环境下的调用，因此需要策略所写的逻辑需要保证线程安全。这个对于天天做数据策略分析的同学来说，增加了不必要的负担。</p>
+</li>
+<li><p class="first">插件热插拔。静态库就不要考虑吧……动态库，据说是可以的，但是也需要好好调研下。（不管怎么说，维护复杂度加了）</p>
+</li>
+<li><dl class="first docutils">
+<dt>相比动态库，静态库的优点：</dt>
+<dd><ul class="first last simple">
+<li>确定性，危险仅仅来自于编译阶段，而采用动态库，则会引入部署不一致的问题</li>
+<li>方便性，省去了上线后校验动态库的步骤。包括部署多个进程时需要关注的动态库路径问题</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
 <p>从上可以看到，so使用维护成本还是很高的。据说Google内部基本上是静态库，不会使用动态库。或者这也是其中的因素吧。 :)</p>
 <p class="last">说到lib插件，其实还有一个无法解决的问题，由于策略(libpolicy.a或libpolicyso)一般是不同的业务开发维护的，因此若其中一个遇到了问题（如某个policy把堆栈写乱core了，或者自己代码写的挫……），会增加一些互相扯皮的可能，对其他插件的稳定性也有影响。</p>
 </dd>
