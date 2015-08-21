@@ -114,7 +114,7 @@ BlackFox' Home            </a>
     </span>
             <span class="label label-default">Modified</span>
             <span class="modified">
-                <i class="fa fa-calendar"></i><time datetime="2015-08-09T13:50:00+08:00"> 2015-08-09 13:50:00</time>
+                <i class="fa fa-calendar"></i><time datetime="2015-08-21T21:30:00+08:00"> 2015-08-21 21:30:00</time>
             </span>
 
 
@@ -225,7 +225,8 @@ BlackFox' Home            </a>
 <li>某个插件挂了，一目了然。策略之间安全隔离，也避免了扯皮的问题。</li>
 <li>热插拔，不是问题。随时替换。</li>
 </ol>
-<p class="last">问题呢？多了一个部署rpc-server，so what？就是一个单进程单线程的模块。而负载均衡等细节，其实rpc框架本身就提供好了。</p>
+<p>问题呢？多了一个部署rpc-server，so what？就是一个单进程单线程的模块。而负载均衡等细节，其实rpc框架本身就提供好了。</p>
+<p class="last">不过rpc也有一个劣势：采用RPC会涉及到数据的序列化以及反序列化。如果序列化、反序列化的性能损耗相对于业务逻辑来说占比较大，那么RPC就不是一个合适的选型了。</p>
 </dd>
 </dl>
 </li>
