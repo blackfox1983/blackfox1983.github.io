@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>动态链接库使用规范 - BlackFox' Home</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <link href="http://blackfox1983.github.io/images/favicon.jpg" rel="icon">
+
+<link rel="canonical" href="http://blackfox1983.github.io/posts/2015/08/23/guide-of-share-lib/">
+
+        <meta name="author" content="MiLimin" />
+        <meta name="keywords" content="动态库" />
+        <meta name="description" content="动态链接库相对静态库在使用、部署上更为便捷，但是由于使用不当也会造成一些意外。这里介绍一些常见的规范，帮助规避动态库使用上的风险。" />
+
+        <meta property="og:site_name" content="BlackFox' Home" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="动态链接库使用规范"/>
+        <meta property="og:url" content="http://blackfox1983.github.io/posts/2015/08/23/guide-of-share-lib/"/>
+        <meta property="og:description" content="动态链接库相对静态库在使用、部署上更为便捷，但是由于使用不当也会造成一些意外。这里介绍一些常见的规范，帮助规避动态库使用上的风险。"/>
+        <meta property="article:published_time" content="2015-08-23" />
+            <meta property="article:section" content="技术" />
+            <meta property="article:tag" content="动态库" />
+            <meta property="article:author" content="MiLimin" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="http://blackfox1983.github.io/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="http://blackfox1983.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="http://blackfox1983.github.io/theme/css/pygments/colorful.css" rel="stylesheet">
+        <link href="http://blackfox1983.github.io/theme/css/html4css1.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://blackfox1983.github.io/theme/css/style.css" type="text/css"/>
+        <link href="http://blackfox1983.github.io/static/custom.css" rel="stylesheet">
+
+
+
+
+
+    <!-- 添加百度统计的支持代码 -->
+        <script src="http://blackfox1983.github.io/static/baidutongji.js" type="text/javascript"></script>
+
+</head>
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://blackfox1983.github.io/" class="navbar-brand">
+BlackFox' Home            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                    <li><a href="http://blackfox1983.github.io/">首页</a></li>
+                    <li><a href="/about.html">关于</a></li>
+                        <li class="active">
+                            <a href="http://blackfox1983.github.io/category/ji-zhu.html">技术</a>
+                        </li>
+                        <li >
+                            <a href="http://blackfox1983.github.io/category/sui-bi.html">随笔</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://blackfox1983.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<style>
+	#banner{
+	    background-image:url("http://blackfox1983.github.io/images/site_logo.gif");
+	}
+</style>
+
+<div id="banner">
+	<div class="container">
+		<div class="copy">
+			<h1>BlackFox' Home</h1>
+		</div>
+	</div>
+</div><!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://blackfox1983.github.io/posts/2015/08/23/guide-of-share-lib/"
+                       rel="bookmark"
+                       title="Permalink to 动态链接库使用规范">
+                        动态链接库使用规范
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2015-08-23T14:15:00+08:00"> 2015-08-23 14:15:00</time>
+    </span>
+
+
+            <span class="label label-default">By</span>
+            <a href="http://blackfox1983.github.io/author/milimin.html"><i class="fa fa-user"></i> MiLimin</a>
+
+        <span class="label label-default">Category</span>
+        <a href="http://blackfox1983.github.io/category/ji-zhu.html">技术</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://blackfox1983.github.io/tag/dong-tai-ku.html">动态库</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>动态库（shared library，即lib*.so）由于其部署、二次开发的便捷性，因此较传统的静态库（lib*.a），在一些团队内应用比较广。本文给出开发到部署各个环节相关的说明以及建议，告诉大家如何更好的编写和使用动态库，规避风险。</p>
+<p><em>但是这里要说明的是，由于动态库带来的问题，一般情况下还是不建议使用动态库。</em></p>
+<ol class="arabic simple">
+<li><strong>开发</strong></li>
+</ol>
+<ul>
+<li><dl class="first docutils">
+<dt>对外接口</dt>
+<dd><ol class="first last arabic simple">
+<li>采用 <cite>extern &quot;C&quot;</cite> 的方式声明对外接口。动态链接库多是采用 <cite>dlopen</cite> 方式进行使用，<cite>dlopen</cite> 打开的动态库使用 dlym` 获取接口的时候，如果动态库采用g++编译，并且接口没有使用 <cite>extern &quot;C&quot;</cite> 的方式，获取接口需要 <cite>dlym(handler, &quot;__fooiv&quot;)</cite> 这样的方式获取，这在使用和维护上都会带来不便。</li>
+<li>非对外的接口采用static的方式。由于存在 <cite>rdynamic, RTLD_GLOBAL</cite> 等可以把接口提升为全局可见的参数存在，非static的接口也可能会被其他的动态库所用到。</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>版本控制</dt>
+<dd><p class="first last">动态库和静态库有一个很大的区别就是动态库是需要用来上线部署，不像静态库那样在编译机上就已经被链接进可执行程序中。所以需要有一套机制可以比较方便进行控制。
+1. 对于动态库 xxx.so， 在最后的产出物中需要被命名为 xxx.so.1.0.0.0, 其中1.0.0.0为动态库的4位版本号 这样的好处是动态库在上线的时候一眼就可以看出是否是对应的版本号，另外在一些特殊的条件下也可以并存有多个相同的但版本不同的库. 在使用的时候可以使用一个xxx.so的软连接链到xxx.so.1.0.0.0上，然后程序中使用 dlopen(&quot;xxx.so&quot;)的方式使用。
+#. 动态链接库本身可以做成可执行的，产出可参考如下：</p>
+</dd>
+</dl>
+</li>
+</ul>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre>ld.so: /lib64/ld-linux-x86-64.so.2
+svn: xxx/xxx/xxx
+Brief: <span class="nb">test </span><span class="k">for</span> so
+BuildDate: Aug <span class="m">22</span> <span class="m">2015</span> 19:57:55
+Version: 1.0.0.0
+</pre></div>
+</td></tr></table><p>不过在一些特殊情况下，比如.so使用了一些全局变量，而这些extern的全局变量是由调用它的二进制程序提供的，这样的.so在编译和被二进制程序载入都是可以正常进行，但是不能独立运行的，这个时候没有全局变量的具体实现，二进制程序不能被载入内存。对于这些情况可以不要求一定要运行，但还是建议要能够被命名为 xxx.so.1.0.0.0。或者单独实现一个mock主进程的 <cite>xxx_version.cpp</cite> （xxx为库名），加载so以show-version。</p>
+<ol class="arabic simple" start="2">
+<li><strong>编码</strong></li>
+</ol>
+<p>这部分主要是一些二进制兼容方面的建议。</p>
+<ul>
+<li><dl class="first docutils">
+<dt>二进制与so之间, so与so之间的数据交换尽量采用指针的形式,不要使用具体的结构体或者class。</dt>
+<dd><ol class="first last arabic simple">
+<li>不要直接操作结构体, 全部采用接口的形式.当二进制与so所使用结构体不相同的时候,直接操作会出现问题.</li>
+<li>尽量保证so使用的各种库与二进制使用的各种库版本一致(本质上是保证二进制兼容)</li>
+<li>so注意跟随升级. 二进制程序所依赖的各种版本最好要低于so所用的版本. 最好在二进制升级后(包括依赖库的升级),把所有的.so都重新编译一编.</li>
+</ol>
+</dd>
+</dl>
+</li>
+</ul>
+<p>事实上如果从这个层面上来说.so本身就失去了很多意义, 这个也是不推荐使用的原因之一。以下为针对上述问题的代码示例：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">//1.0.0版本</span>
+<span class="k">struct</span> <span class="kt">demo_t</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">b</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">//后续升级为1.0.1版本</span>
+<span class="k">struct</span> <span class="kt">demo_t</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">b</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">c</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">//对于如下情况</span>
+<span class="kt">demo_t</span> <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="n">so_func_create</span><span class="p">();</span> <span class="c1">//so_func_create为so提供的对外接口函数，返回一个demo_t指针</span>
+<span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">a</span><span class="o">-&gt;</span><span class="n">c</span><span class="p">;</span>
+</pre></div>
+</td></tr></table><p>当so的版本比二进制的版本要低的时候,这个时候就会出现问题。因为 <cite>so_func_create</cite> 产生的 <cite>demo_t</cite> 是按照升级前的结果给出的，结构体长度只有2个int，没有其中c这个成员, 但是在二进制中是按照存在c来进行访问的，这个时候就造成数据的越界访问。所以二进制依赖的版本不应该高于so所依赖的各种库版本(包括二进制自身)，毕竟我们可以做到高版本对低版本的兼容, 但是无法作到低版本对高版本的兼容。</p>
+<p>把上面的例子做一下修改：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">//demo的代码中:</span>
+<span class="kt">void</span> <span class="nf">demo_todo</span><span class="p">(</span><span class="kt">demo_t</span> <span class="o">*</span><span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">a</span><span class="o">-&gt;</span><span class="n">c</span><span class="o">++</span><span class="p">;</span>
+      <span class="c1">//.....</span>
+<span class="p">}</span>
+
+<span class="kt">demo_t</span> <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="n">so_func_create</span><span class="p">();</span>
+<span class="n">memset</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">demo_t</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">demo_todo</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+</pre></div>
+</td></tr></table><p>即使在so版本比二进制版本要高的情况下，这里也存在问题，在二进制中 <cite>demo_t</cite> 的长度是2个int的长度，但是实际上3个int的长度，这样memset的时候想清零，其实还漏了一个c没有被清零。在后面的操作就出现了问题，这里对于内存元素的操作最好用接口（如 <cite>a-&gt;zero_self()</cite> ）进行内部操作，而不是直接暴露数据。</p>
+<p>事实上这里存在的一个问题就是so中和二进制中都存在一个函数具体调用哪个的问题,这个在下面的使用章节中说明。</p>
+<ol class="arabic simple" start="3">
+<li><strong>使用</strong></li>
+</ol>
+<p>这里的使用指的是其它二进制程序使用已有的 <cite>.so</cite> 。</p>
+<ul>
+<li><dl class="first docutils">
+<dt>dlopen的时候不要使用RTLD_GLOBAL</dt>
+<dd><ul class="first last simple">
+<li>RTLD_GLOBAL会导致一个dlopen的动态库符号表全局可见可能会到致其他的动态库在运行时的行为改变</li>
+<li>如果遇到一些情况确实需要so之间互相调用，需要注意是否会导致其他问题</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+<ul>
+<li><dl class="first docutils">
+<dt>对于动态库、静态库混合编译的要求, 建议采用下面两种方案</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>编译二进制使用 <cite>-rdynamic</cite> (必要的时候采用 <cite>-Wl,--whole-archive -lxxxx -Wl, --no-whole-archive</cite> 把整个库导入)，动态链接库不要链接主程序中有的库,编译时采用与主程序相同版本的库</dt>
+<dd><ul class="first last simple">
+<li>动态库编译的时候尽量不要去链接基础静态库</li>
+<li>如果动态库链接了其他的静态库，在二进制编译的时候可能造成符号表混乱,无论是采用dlopen方式还是采用直接链接的方式，由于动态库和另外的动态库或者 <cite>.a</cite> 中都存在一个相同的符号，这个时候如果存在版本不一致就可能出现一些莫名其妙的错误</li>
+<li>另外就是规避一些库中存在全局变量，造成不同的库中使用不同的本地变量但又用了相同的全局变量造成变量逻辑不一致</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>编译二进制不使用 <cite>-rdynamic</cite> , 动态库链接的使用加上 <cite>-Wl,-Bsymbolic</cite> 参数并且 <cite>.so</cite> 链接所有需要的库，所需要的全局参数通过指针数据在初始化的时候进行传递，比如log, 把东西传到.so，.so里面再open一次(有些32位环境中由于不需要-fPIC参数可能本身不会有问题，但64位下二进制和so中全局变量会用到同一块区域）</dt>
+<dd><ul class="first last simple">
+<li><cite>-rdynamic</cite> 参数导致二进制程序中的符号变成全局的，如果动态库和二进制程序有同名接口那么会导致动态库调用二进制程序中的同名接口。</li>
+<li>如果主程序和动态库都使用了一个库的不同版本，会造成在使用动态库的时候实际调用的是主程序中的版本，而不同版本由于库内部实现的变化可能造成链接的错位从而导致链接的库的使用错误。</li>
+<li><cite>-Wl,-Bsymbolic</cite> 参数可以强制把所有的extern的对外全局变量变成在主程序和动态库中都是独立的内存空间,如log库中使用了一些全局变量。</li>
+<li>采用 <cite>-rdynamic</cite> 编译后，对于动态库中有和主程序使用的同样的库，要么要与主程序版本保持一致，要么就是编译动态库的时候不链接相同的库(不链接的情况下可能存在对外接口的兼容性问题，需要保证对外接口的一致性)。</li>
+<li>共享库和二进制间不要有结构体实体数据的交互(包括inline接口)，全部采用针对指针或者句柄的接口编程</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>再次载入 <cite>.so</cite> 程序，需要先把原来的handle用 <cite>dlclose</cite> 掉后再重新载入</dt>
+<dd><ul class="first last simple">
+<li><cite>dlopen</cite> 的时候如果所要的动态库已经被占用，再次 <cite>dlopen</cite> 的时候只是做了引用记数，并没有真的载入 <cite>.so</cite> 哪怕so已经改变。</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>动态库发布的时候需要把动态链接发布到某个特定目录下，使用软链接将 <cite>xxx.so</cite> 指向 <cite>xxx.so.1.0.0.0</cite></dt>
+<dd><ul class="first last simple">
+<li>虽然我们自己编写的动态链接库多数情况下都是使用 <cite>dlopen</cite> 方式打开使用，但还是有些情况下会出现将动态库像静态库那样链接使用，这时候考虑链接方便需要采用统一的名字。比如 <cite>main</cite> 中使用 <cite>dlopen</cite> 方式打开 <cite>libx.so</cite> 和 <cite>liby.so</cite> , 但 <cite>libx.so</cite> 和 <cite>liby.so</cite> 又需要使用同样的接口而 <cite>main</cite> 又用不到这样的接口，这个时候就可以采用将公用的接口提取出来做为一个动态库，让 <cite>main</cite> 像静态库那样链接使用。</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>不要随意使用全局变量</dt>
+<dd><ul class="first last simple">
+<li>由于动态库中全局变量的行为受到编译参数的控制, 全局变量在使用中很容易会造成困惑，比如全局变量两次初始化等问题, (注意: 类中的static成员相当于全局变量，也存在这些问题)。</li>
+<li>如果需要使用全局数据，尽量采用单例模式的方式, 声明为 <cite>static</cite> 变量, 通过一个全局的接口（比如 <cite>xxx_get_var</cite> , 这样来拿到需要的指针），内部实现定义的时候是一个NULL, 运行的时候发现为NULL就new一个, 想规避多线程问题可以在载入程序的时候运行, 用一个static class变量的构造和析构专门来分配和释放这个变量或者用gcc的扩展 <cite>__attribute ((constructor))</cite> 和 <cite>__attribute ((destructor)))</cite> 来实现。</li>
+<li>如果全局变量间有依赖关系又会涉及到初始化顺序，但在C++中，不同的.cpp中的初始化顺序由链接的时候的顺序来决定，我们很难控制。通过单例的方式可以减少问题。</li>
+<li>一些变量的定义可以采用在函数中定义static变量来解决，而不需要对外。</li>
+<li>如果有特殊需求，确实需要多个.so都采用同一个全局变量，这里建议由主程序提供全局初始化接口，让多个.so可以在初始化的时候得到对应数据,采用 <cite>get/set</cite> 的接口进行访问。</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">so与主程序之间可以提供一些接口来判断兼容性</p>
+</li>
+</ul>
+<ol class="arabic simple" start="4">
+<li><strong>部署</strong></li>
+</ol>
+<p>这里对动态库上线更新提出建议：</p>
+<ul>
+<li><dl class="first docutils">
+<dt>确认cp, sync等覆盖方式是否支持更新正在运行的动态库</dt>
+<dd><ol class="first last arabic simple">
+<li>需要确认使用中的内核版本是否支持对于已经被载入的动态库进行热切换操作</li>
+<li>所有的切换操作要么保证程序已经停止运行，要么确定已经被dlclose</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>采用软链接的方式更新和使用动态链接库</dt>
+<dd><ol class="first last arabic simple">
+<li>前面提到过，实际生成的动态库名字是带版本号的， 但实际使用的时候可能是采用不带版本号名字(带了版本号就不能随便升级了）, 我们采用 <cite>ln -fs xxx.so.1.1.0.0 xxx.so</cite> 的方式(参数f是强制指向，可以用来修改旧的软连接)来解决这个问题。</li>
+<li>软连接的方式修改使用的库这个过程可以在动态库正在被使用的过程中进行，不需要保证程序停止或者 dlclose。这个过程是安全，但这里软连接的修改不意味着程序使用的动态库版本已经发送变化，其实程序使用的动态库版本还是老版本。</li>
+<li>需要重启程序或者主动 <cite>dlopen</cite> 重新打开才算更新成功。</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>动态库更新后需要确认更新的是否是我们需要的库版本</dt>
+<dd><ol class="first last arabic simple">
+<li>这个过程可以通过 <cite>/usr/sbin/lsof -p $pid</cite> 来确认否载入了我们使用版本的库。</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><p class="first"><cite>LD_LIBRARY_PATH</cite> 需要加在启动脚本中, 设置在环境中可能会造成其他动态库使用的问题, 不建议使用</p>
+</li>
+</ul>
+<ol class="arabic simple" start="4">
+<li><strong>其他</strong></li>
+</ol>
+<ul class="simple">
+<li>不要暴露实体在头文件中，采用针对接口或者针对句柄的使用方式</li>
+<li>.so不要连接实际采用.a</li>
+<li>可以考虑把公用部分全部采用.so，然后所以东西都采用和正常的静态库一样的编译方式。缺点是库的版本需要变成op来维护</li>
+<li>如果二进制程序长时间不升级，当.so需要使用库的新功能的时候,会很容易导致二进制被迫升级，甚至有些时候会出现其他无关的.so也被迫被升级</li>
+<li>.so与.so之间的数据交互也不要用实体</li>
+</ul>
+<ol class="arabic simple" start="5">
+<li><strong>总结</strong></li>
+</ol>
+<ul class="simple">
+<li>so 本质上不能完全解决反向依赖的问题，还是需要有一定的注意事项</li>
+<li>在so的一些处理上代价还是比较高昂，一不注意就会存在连锁反应，特别是在持续升级的情况下</li>
+<li>建议可以用.a的地方还是尽量用.a，不要为了追求模块化而采用so的方式</li>
+<li>在用so的时候注意一下兼容性问题，简单的方式可以先引入版本判断机制，对于so和主程序编译的版本进行强制判断</li>
+</ul>
+
+            </div>
+            <!-- /.entry-content -->
+    <hr/>
+    <section class="comments" id="comments">
+        <h2>Comments</h2>
+
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'blackfox1983'; // required: replace example with your forum shortname
+
+                    var disqus_identifier = 'guide-of-share-lib';
+                var disqus_url = 'http://blackfox1983.github.io/posts/2015/08/23/guide-of-share-lib/';
+
+            var disqus_config = function () {
+                this.language = "zh";
+            };
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function () {
+                var dsq = document.createElement('script');
+                dsq.type = 'text/javascript';
+                dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by
+            Disqus.</a></noscript>
+        <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </section>
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+<div id="aboutme">
+        <p>
+            <img width="100%" class="img-thumbnail" src="/images/profile.jpg"/>
+        </p>
+    <p>
+        <strong>About MiLimin</strong><br/>
+        <a href="mailto:blackfox1983@163.com?subject=博客来信">联系我</a>
+    </p>
+</div>
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+              <ul class="list-group" id="social">
+                <li class="list-group-item"><a href="http://weibo.com/blackfox1983/"><i class="fa fa-微博-square fa-lg"></i> 微博</a></li>
+                <li class="list-group-item"><a href="http://www.baidu.com/"><i class="fa fa-百度-square fa-lg"></i> 百度</a></li>
+                <li class="list-group-item"><a href="http://google.com.hk/"><i class="fa fa-google-square fa-lg"></i> Google</a></li>
+                <li class="list-group-item"><a href="https://github.com/"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
+              </ul>
+            </li>
+
+
+
+            <li class="list-group-item"><a href="http://blackfox1983.github.io/tags.html"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <ul class="list-group " id="tags">
+                    <li class="list-group-item tag-1">
+                        <a href="http://blackfox1983.github.io/tag/jia-gou-she-ji.html">
+                            架构设计
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/ioccc.html">
+                            IOCCC
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/dai-ma-hun-yao.html">
+                            代码混淆
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/dong-tai-ku.html">
+                            动态库
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/zhi-chang.html">
+                            职场
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/mian-shi.html">
+                            面试
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
+      <ul class="list-group" id="links">
+        <li class="list-group-item">
+            <a href="http://linuxtools-rst.readthedocs.org/zh_CN/latest/" target="_blank">
+                LinuxToolsTutorial
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://getpelican.com/" target="_blank">
+                Pelican
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://python.org/" target="_blank">
+                Python.org
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://jinja.pocoo.org/" target="_blank">
+                Jinja2
+            </a>
+        </li>
+      </ul>
+    </li>
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2015 MiLimin
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>              <p><small>  <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="//i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a>
+    Content
+  licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>, except where indicated otherwise.
+</small></p>
+         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="http://blackfox1983.github.io/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="http://blackfox1983.github.io/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="http://blackfox1983.github.io/theme/js/respond.min.js"></script>
+
+    <script src="http://blackfox1983.github.io/theme/js/bodypadding.js"></script>
+    <!-- Disqus -->
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'blackfox1983'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function () {
+            var s = document.createElement('script');
+            s.async = true;
+            s.type = 'text/javascript';
+            s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+            (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+        }());
+    </script>
+    <!-- End Disqus Code -->
+
+</body>
+</html>
