@@ -114,7 +114,7 @@ BlackFox' Home            </a>
     </span>
             <span class="label label-default">Modified</span>
             <span class="modified">
-                <i class="fa fa-calendar"></i><time datetime="2015-08-21T21:30:00+08:00"> 2015-08-21 21:30:00</time>
+                <i class="fa fa-calendar"></i><time datetime="2015-10-11T16:30:00+08:00"> 2015-10-11 16:30:00</time>
             </span>
 
 
@@ -219,7 +219,7 @@ BlackFox' Home            </a>
 <ol class="arabic simple">
 <li>X模块使用rpc-client，策略使用rpc-server端开发逻辑。</li>
 <li>rpc-server与X模块部署在同一台机器，这样rpc之间的数据传输就成了本机间的内存拷贝。</li>
-<li>如果考虑到rpc接收和发送的序列化性能损耗，整个调用可以采用异步的方式进行调用。</li>
+<li>如果考虑到rpc接收和发送的网络损耗，整个调用可以采用异步的方式进行调用。</li>
 <li>业务逻辑和X模块分别链接liba.a的各自需求的版本，由于进程隔离，版本冲突不再是问题。也没有so的那些繁琐的问题。</li>
 <li>rpc-server可以配置单线程运行，并发问题可以通过本机部署多个local-rpc解决，不再由策略同学写线程安全代码的负担问题。</li>
 <li>某个插件挂了，一目了然。策略之间安全隔离，也避免了扯皮的问题。</li>
@@ -303,6 +303,11 @@ BlackFox' Home            </a>
                     <li class="list-group-item tag-1">
                         <a href="http://blackfox1983.github.io/tag/jia-gou-she-ji.html">
                             架构设计
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/cache.html">
+                            Cache
                         </a>
                     </li>
                     <li class="list-group-item tag-3">
