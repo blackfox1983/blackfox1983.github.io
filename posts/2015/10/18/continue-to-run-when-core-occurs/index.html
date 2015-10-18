@@ -199,17 +199,19 @@ BlackFox' Home            </a>
 65
 66
 67
-68</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include &lt;stdio.h&gt;</span>
+68
+69</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include &lt;stdio.h&gt;</span>
 <span class="cp">#include &lt;signal.h&gt;</span>
 <span class="cp">#include &lt;setjmp.h&gt;</span>
 <span class="cp">#include &lt;assert.h&gt;</span>
 <span class="cp">#include &lt;string.h&gt;</span>
 <span class="cp">#include &lt;unistd.h&gt;</span>
 
-<span class="kt">jmp_buf</span> <span class="n">g_buf</span><span class="p">;</span>
+<span class="kt">jmp_buf</span> <span class="n">g_buf</span><span class="p">;</span> <span class="c1">//实现机制，主要关注点</span>
 
-<span class="kt">bool</span> <span class="n">g_quit</span><span class="p">;</span>
+<span class="kt">bool</span> <span class="n">g_quit</span><span class="p">;</span> <span class="c1">//退出标志</span>
 
+<span class="c1">//模块处理数据结构</span>
 <span class="k">struct</span> <span class="n">stru</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">len</span><span class="p">;</span>
 <span class="p">};</span>
