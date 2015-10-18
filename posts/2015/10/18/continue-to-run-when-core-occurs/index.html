@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>博客安家GitHub了 - BlackFox' Home</title>
+    <title>让模块出core时继续运行 - BlackFox' Home</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -10,18 +10,20 @@
 
     <link href="http://blackfox1983.github.io/images/favicon.jpg" rel="icon">
 
-<link rel="canonical" href="http://blackfox1983.github.io/posts/2015/06/28/settle-in-github/">
+<link rel="canonical" href="http://blackfox1983.github.io/posts/2015/10/18/continue-to-run-when-core-occurs/">
 
         <meta name="author" content="MiLimin" />
-        <meta name="description" content="经过一段时间的了解和研究，决定将博客空间重新部署在Github" />
+        <meta name="keywords" content="core" />
+        <meta name="description" content="当模块出core时，默认都会停止运行，尤其当一份脏数据到处传播时，服务几乎就处于不断的启停状态。如果让模块在出core时继续运行，该如何做到呢？" />
 
         <meta property="og:site_name" content="BlackFox' Home" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="博客安家GitHub了"/>
-        <meta property="og:url" content="http://blackfox1983.github.io/posts/2015/06/28/settle-in-github/"/>
-        <meta property="og:description" content="经过一段时间的了解和研究，决定将博客空间重新部署在Github"/>
-        <meta property="article:published_time" content="2015-06-28" />
-            <meta property="article:section" content="随笔" />
+        <meta property="og:title" content="让模块出core时继续运行"/>
+        <meta property="og:url" content="http://blackfox1983.github.io/posts/2015/10/18/continue-to-run-when-core-occurs/"/>
+        <meta property="og:description" content="当模块出core时，默认都会停止运行，尤其当一份脏数据到处传播时，服务几乎就处于不断的启停状态。如果让模块在出core时继续运行，该如何做到呢？"/>
+        <meta property="article:published_time" content="2015-10-18" />
+            <meta property="article:section" content="技术" />
+            <meta property="article:tag" content="core" />
             <meta property="article:author" content="MiLimin" />
 
 
@@ -60,10 +62,10 @@ BlackFox' Home            </a>
             <ul class="nav navbar-nav">
                     <li><a href="http://blackfox1983.github.io/">首页</a></li>
                     <li><a href="/about.html">关于</a></li>
-                        <li >
+                        <li class="active">
                             <a href="http://blackfox1983.github.io/category/ji-zhu.html">技术</a>
                         </li>
-                        <li class="active">
+                        <li >
                             <a href="http://blackfox1983.github.io/category/sui-bi.html">随笔</a>
                         </li>
             </ul>
@@ -95,10 +97,10 @@ BlackFox' Home            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://blackfox1983.github.io/posts/2015/06/28/settle-in-github/"
+                    <a href="http://blackfox1983.github.io/posts/2015/10/18/continue-to-run-when-core-occurs/"
                        rel="bookmark"
-                       title="Permalink to 博客安家GitHub了">
-                        博客安家GitHub了
+                       title="Permalink to 让模块出core时继续运行">
+                        让模块出core时继续运行
                     </a>
                 </h1>
             </header>
@@ -108,35 +110,165 @@ BlackFox' Home            </a>
 <footer class="post-info">
     <span class="label label-default">Date</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2015-06-28T23:10:00+08:00"> 2015-06-28 23:10:00</time>
+        <i class="fa fa-calendar"></i><time datetime="2015-10-18T18:20:00+08:00"> 2015-10-18 18:20:00</time>
     </span>
-            <span class="label label-default">Modified</span>
-            <span class="modified">
-                <i class="fa fa-calendar"></i><time datetime="2015-07-11T11:50:00+08:00"> 2015-07-11 11:50:00</time>
-            </span>
 
 
             <span class="label label-default">By</span>
             <a href="http://blackfox1983.github.io/author/milimin.html"><i class="fa fa-user"></i> MiLimin</a>
 
         <span class="label label-default">Category</span>
-        <a href="http://blackfox1983.github.io/category/sui-bi.html">随笔</a>
+        <a href="http://blackfox1983.github.io/category/ji-zhu.html">技术</a>
 
 
+<span class="label label-default">Tags</span>
+	<a href="http://blackfox1983.github.io/tag/core.html">core</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>博客空间几经周折，从03年在学校主页空间到处找位置，到06年最开始的新浪博客， 08年维护学院网站服务器时使用一部分磁盘空间做个人主页，最后到10年的百度空间……，一直在寻找一个可自定义的个人空间，
-一方面是作为自己学习、生活的记录，另一方面是出于技术人员的一些想法，对于博客空间也有一定的要求，如：</p>
-<ul class="simple">
-<li>支持代码高亮</li>
-<li>空间技术氛围浓厚</li>
-<li>布局可定制</li>
-</ul>
-<p>这段时间随着工作的需求，接触github上的开源项目越来越多，逐渐了解到github也可以支持个人站点。使用个人站点即可部署个人的技术博客。
-在调研了常见的博客框架后，经过一段时间的折腾，终于将博客空间安家在github上。</p>
-<p>后续将不定期持续更新，陆续发布一些技术、随笔等多个类目的内容。</p>
+                <p>模块在代码编写中，对于脏数据的容错不够（实际环境中异常数据的出现其实也是一种正常现象）或者程序bug，经常会引发程序出core，有时候还是线上一闪而过就不再出现的case，给RD、QA的追查带来不便，并且模块由于core不断启停，对于服务的稳定性也有影响。如果可以设计一种机制：</p>
+<ol class="arabic simple">
+<li>脏数据到来时，针对模块的bug会触发core，但是不应让模块停止，模块过滤掉脏数据继续运行。这样可以减少OP的运维成本，以及线上数据处理的稳定性。</li>
+<li>对于脏数据可以将其dump出来并做个监控，这样报警时，可以用这个数据做case复现，提高bug分析的效率。</li>
+</ol>
+<p>那么这样对于模块的维护将起到一个不错的作用。这里写了一个demo，示例代码如下：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include &lt;stdio.h&gt;</span>
+<span class="cp">#include &lt;signal.h&gt;</span>
+<span class="cp">#include &lt;setjmp.h&gt;</span>
+<span class="cp">#include &lt;assert.h&gt;</span>
+<span class="cp">#include &lt;string.h&gt;</span>
+<span class="cp">#include &lt;unistd.h&gt;</span>
 
+<span class="kt">jmp_buf</span> <span class="n">g_buf</span><span class="p">;</span>
+
+<span class="kt">bool</span> <span class="n">g_quit</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="n">stru</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">len</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">void</span> <span class="nf">handler</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">sig</span> <span class="o">==</span> <span class="n">SIGINT</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">g_quit</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span> <span class="c1">//退出程序</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="n">siglongjmp</span><span class="p">(</span><span class="n">g_buf</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">//实现机制，主要关注点</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">recv_pack</span><span class="p">(</span><span class="k">struct</span> <span class="n">stru</span><span class="o">*</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">data</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">);</span>
+    <span class="k">static</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">data</span><span class="o">-&gt;</span><span class="n">len</span> <span class="o">=</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">//将数据dump出来（如磁盘文件）</span>
+<span class="kt">void</span> <span class="nf">dump_pack</span><span class="p">(</span><span class="k">const</span> <span class="k">struct</span> <span class="n">stru</span><span class="o">&amp;</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;dump: %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">.</span><span class="n">len</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">process</span><span class="p">(</span><span class="k">struct</span> <span class="n">stru</span><span class="o">*</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">data</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">len</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//异常演示</span>
+        <span class="kt">int</span><span class="o">*</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">signal</span><span class="p">(</span><span class="n">SIGSEGV</span><span class="p">,</span> <span class="n">handler</span><span class="p">);</span>
+    <span class="n">signal</span><span class="p">(</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">handler</span><span class="p">);</span>
+
+    <span class="n">g_quit</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+
+    <span class="k">struct</span> <span class="n">stru</span> <span class="n">data</span><span class="p">;</span>
+
+    <span class="c1">//实现机制，主要关注点</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">sigsetjmp</span><span class="p">(</span><span class="n">g_buf</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">dump_pack</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">g_quit</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">recv_pack</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data</span><span class="p">);</span>
+        <span class="n">process</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data</span><span class="p">);</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="c1">//方便demo演示，避免刷屏</span>
+    <span class="p">}</span>
+
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table>
             </div>
             <!-- /.entry-content -->
     <hr/>
@@ -148,8 +280,8 @@ BlackFox' Home            </a>
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'blackfox1983'; // required: replace example with your forum shortname
 
-                    var disqus_identifier = 'settle-in-github';
-                var disqus_url = 'http://blackfox1983.github.io/posts/2015/06/28/settle-in-github/';
+                    var disqus_identifier = 'continue-to-run-when-core-occurs';
+                var disqus_url = 'http://blackfox1983.github.io/posts/2015/10/18/continue-to-run-when-core-occurs/';
 
             var disqus_config = function () {
                 this.language = "zh";
