@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>Linux 调度器内幕 - BlackFox' Home</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <link href="http://blackfox1983.github.io/images/favicon.jpg" rel="icon">
+
+<link rel="canonical" href="http://blackfox1983.github.io/posts/2016/08/28/inside-the-linux-scheduler/">
+
+        <meta name="author" content="MiLimin" />
+        <meta name="keywords" content="内核,O(1)调度器" />
+        <meta name="description" content="Linux内核2.6 版本的内核最重要的特性之一是由 Ingo Molnar 实现的调度器。这个调度器是动态的，可以支持负载均衡，并以恒定的速度进行操作 —— O(1)。" />
+
+        <meta property="og:site_name" content="BlackFox' Home" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Linux 调度器内幕"/>
+        <meta property="og:url" content="http://blackfox1983.github.io/posts/2016/08/28/inside-the-linux-scheduler/"/>
+        <meta property="og:description" content="Linux内核2.6 版本的内核最重要的特性之一是由 Ingo Molnar 实现的调度器。这个调度器是动态的，可以支持负载均衡，并以恒定的速度进行操作 —— O(1)。"/>
+        <meta property="article:published_time" content="2016-08-28" />
+            <meta property="article:section" content="技术" />
+            <meta property="article:tag" content="内核" />
+            <meta property="article:tag" content="O(1)调度器" />
+            <meta property="article:author" content="MiLimin" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="http://blackfox1983.github.io/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="http://blackfox1983.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="http://blackfox1983.github.io/theme/css/pygments/colorful.css" rel="stylesheet">
+        <link href="http://blackfox1983.github.io/theme/css/html4css1.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://blackfox1983.github.io/theme/css/style.css" type="text/css"/>
+        <link href="http://blackfox1983.github.io/static/custom.css" rel="stylesheet">
+
+
+
+
+
+    <!-- 添加百度统计的支持代码 -->
+        <script src="http://blackfox1983.github.io/static/baidutongji.js" type="text/javascript"></script>
+
+</head>
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://blackfox1983.github.io/" class="navbar-brand">
+BlackFox' Home            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                    <li><a href="http://blackfox1983.github.io/">首页</a></li>
+                    <li><a href="/about.html">关于</a></li>
+                        <li class="active">
+                            <a href="http://blackfox1983.github.io/category/ji-zhu.html">技术</a>
+                        </li>
+                        <li >
+                            <a href="http://blackfox1983.github.io/category/sui-bi.html">随笔</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://blackfox1983.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<style>
+	#banner{
+	    background-image:url("http://blackfox1983.github.io/images/site_logo.gif");
+	}
+</style>
+
+<div id="banner">
+	<div class="container">
+		<div class="copy">
+			<h1>BlackFox' Home</h1>
+		</div>
+	</div>
+</div><!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://blackfox1983.github.io/posts/2016/08/28/inside-the-linux-scheduler/"
+                       rel="bookmark"
+                       title="Permalink to Linux 调度器内幕">
+                        Linux 调度器内幕
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-08-28T22:00:00+08:00"> 2016-08-28 22:00:00</time>
+    </span>
+
+
+            <span class="label label-default">By</span>
+            <a href="http://blackfox1983.github.io/author/milimin.html"><i class="fa fa-user"></i> MiLimin</a>
+
+        <span class="label label-default">Category</span>
+        <a href="http://blackfox1983.github.io/category/ji-zhu.html">技术</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://blackfox1983.github.io/tag/nei-he.html">内核</a>
+        /
+	<a href="http://blackfox1983.github.io/tag/o1diao-du-qi.html">O(1)调度器</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>本文转载并扩展自：<a class="reference external" href="http://www.ibm.com/developerworks/cn/linux/l-scheduler/">Linux 调度器内幕</a></p>
+<ol class="arabic simple">
+<li><strong>什么是调度器</strong></li>
+</ol>
+<p>通常来说，操作系统是应用程序和可用资源之间的媒介。典型的资源有内存和物理设备。但是 CPU 也可以认为是一个资源，调度器可以临时分配一个任务在上面执行（单位是时间片）。调度器使得我们同时执行多个程序成为可能，因此可以与具有各种需求的用户共享 CPU。</p>
+<p>调度器的一个重要目标是有效地分配 CPU 时间片，同时提供很好的用户体验。调度器还需要面对一些互相冲突的目标，例如既要为关键实时任务最小化响应时间，又要最大限度地提高 CPU 的总体利用率。下面我们来看一下 Linux 2.6 调度程序是如何实现这些目标的，并与以前的调度器进行比较。</p>
+<ol class="arabic simple" start="2">
+<li><strong>早期 Linux 调度器的问题</strong></li>
+</ol>
+<p>在 2.6 版本的内核之前，当很多任务都处于活动状态时，调度器有很明显的限制。这是由于调度器是使用一个复杂度为 O(n) 的算法实现的。在这种调度器中，调度任务所花费的时间是一个系统中任务个数的函数。换而言之，活动的任务越多，调度任务所花费的时间越长。在任务负载非常重时，处理器会因调度消耗掉大量的时间，用于任务本身的时间就非常少了。因此，这个算法缺乏可伸缩性。</p>
+<p>在对称多处理系统（SMP）中，2.6 版本之前的调度器对所有的处理器都使用一个运行队列。这意味着一个任务可以在任何处理器上进行调度 —— 这对于负载均衡来说是好事，但是对于内存缓存来说却是个灾难。例如，假设一个任务正在 CPU-1 上执行，其数据在这个处理器的缓存中。如果这个任务被调度到 CPU-2 上执行，那么数据就需要先在 CPU-1 使其无效，并将其放到 CPU-2 的缓存中。</p>
+<p>以前的调度器还使用了一个运行队列锁；因此在 SMP 系统中，选择一个任务执行就会阻碍其他处理器操作这个运行队列。结果是空闲处理器只能等待这个处理器释放出运行队列锁，这样会造成效率的降低。</p>
+<p>最后，在早期的内核中，抢占是不可能的；这意味着如果有一个低优先级的任务在执行，高优先级的任务只能等待它完成。</p>
+<ol class="arabic simple" start="3">
+<li><strong>Linux 2.6 调度器简介</strong></li>
+</ol>
+<p>2.6 版本的调度器是由 Ingo Molnar 设计并实现的。Ingo 从 1995 年开始就一直参与 Linux 内核的开发。他编写这个新调度器的动机是为唤醒、上下文切换和定时器中断开销建立一个完全 O(1) 的调度器。触发对新调度器的需求的一个问题是 Java™ 虚拟机（JVM）的使用。Java 编程模型使用了很多执行线程，在 O(n) 调度器中这会产生很多调度负载。O(1) 调度器在这种高负载的情况下并不会受到太多影响，因此 JVM 可以有效地执行。</p>
+<p>2.6 版本的调度器解决了以前调度器中发现的 3 个主要问题（O(n) 和 SMP 可伸缩性的问题），还解决了其他一些问题。现在我们将开始探索一下 2.6 版本的调度器的基本设计。</p>
+<ul class="simple">
+<li>主要的调度结构</li>
+</ul>
+<p>首先我们来回顾一下 2.6 版本的调度器结构。每个 CPU 都有一个运行队列，其中包含了 140 个优先级列表，它们是按照先进先出的顺序进行服务的。被调度执行的任务都会被添加到各自运行队列优先级列表的末尾。每个任务都有一个时间片，这取决于系统允许执行这个任务多长时间。运行队列的前 100 个优先级列表保留给实时任务使用，后 40 个用于用户任务（参见图 1）。我们稍后将来看一下为什么这种区别非常重要。</p>
+<div class="figure">
+<img alt="Linux 2.6 调度器的运行队列结构" src="/images/linux_sche.gif" style="width: 500px;" />
+<p class="caption">Linux 2.6 调度器的运行队列结构</p>
+</div>
+<p>除了 CPU 的运行队列（称为活动运行队列（active runqueue））之外，还有一个过期运行队列。当活动运行队列中的一个任务用光自己的时间片之后，它就被移动到过期运行队列（expired runqueue） 中。在移动过程中，会对其时间片重新进行计算（因此会体现其优先级的作用；稍后会更详细地介绍）。如果活动运行队列中已经没有某个给定优先级的任务了，那么指向活动运行队列和过期运行队列的指针就会交换，这样就可以让过期优先级列表变成活动优先级的列表。</p>
+<p>调度器的工作非常简单：它在优先级最高的队列中选择一个任务来执行。为了使这个过程的效率更高，内核使用了一个位图来定义给定优先级列表上何时存在任务。因此，在大部分体系架构上，会使用一条 find-first-bit-set 指令在 5 个 32 位的字（140 个优先级）中哪一位的优先级最高。查找一个任务来执行所需要的时间并不依赖于活动任务的个数，而是依赖于优先级的数量。这使得 2.6 版本的调度器成为一个复杂度为 O(1) 的过程，因为调度时间既是固定的，而且也不会受到活动任务个数的影响。</p>
+<ul class="simple">
+<li>更好地支持 SMP 系统*</li>
+</ul>
+<p>那么什么是 SMP 呢？SMP(Symmetrical Multi-Processing) 是一种体系架构，其中多个 CPU 可以用来同时执行各个任务，它与传统的非对称处理系统不同，后者使用一个 CPU 来执行所有的任务。SMP 体系架构对多线程的应用程序非常有益。</p>
+<p>另外，这里插一句，组建SMP系统，首先最关键的一点就是需要合适的CPU相配合。我们平时看到的CPU都是单颗使用，所以看不出来它们有什么区别，但是，实际上，支持SMP功能并不是没有条件的，随意拿几块CPU来就可以建立多处理系统那简直是天方夜谈。要实现SMP功能，我们使用的CPU必须具备以下要求：</p>
+<ul class="simple">
+<li>CPU内部必须内置APIC（Advanced Programmable Interrupt Controllers）单元。Intel 多处理规范的核心就是高级可编程中断控制器（Advanced Programmable Interrupt Controllers--APICs）的使用。CPU通过彼此发送中断来完成它们之间的通信。通过给中断附加动作（actions），不同的CPU可以在某种程度上彼此进行控制。每个CPU有自己的APIC（成为那个CPU的本地APIC），并且还有一个I/O APIC来处理由I/O设备引起的中断，这个I/O APIC是安装在主板上的，但每个CPU上的APIC则不可或缺，否则将无法处理多CPU之间的中断协调。</li>
+<li>相同的产品型号，同样类型的CPU核心。例如，虽然Athlon和Pentium III各自都内置有APIC单元，想要让它们一起建立SMP系统是不可能的，当然，即使是Celeron和Pentium III，那样的可能性也为0，甚至Coppermine核心的Pentium III和Tualatin的Pentium III也不能建立SMP系统--这是因为他们的运行指令不完全相同，APIC中断协调差异也很大。</li>
+<li>完全相同的运行频率。如果要建立双Pentium III系统，必须两颗866MHz或者两颗1000MHz处理器，不可以用一颗866MHz，另一颗1000MHz来组建，否则系统将无法正常点亮。</li>
+<li>尽可能保持相同的产品序列编号。即使是同样核心的相同频率处理器，由于生产批次不同也会造成不可思议的问题。两个生产批次的CPU作为双处理器运行的时候，有可能会发生一颗CPU负担过高，而另一颗负担很少的情况，无法发挥最大性能，更糟糕的是可能导致死机，因此，应该尽可能选择同一批生产的处理器来组建SMP系统。</li>
+</ul>
+<p>尽管优先级调度在 SMP 系统上也可以工作，但是它这种大锁体系架构意味着当一个 CPU 选择一个任务进行分发调度时，运行队列会被这个 CPU 加锁，其他 CPU 只能等待。2.6 版本的调度器不是使用一个锁进行调度；相反，它对每个运行队列都有一个锁。这样允许所有的 CPU 都可以对任务进行调度，而不会与其他 CPU 产生竞争。</p>
+<p>另外，由于每个处理器都有一个运行队列，因此任务通常都是与 CPU 密切相关的，可以更好地利用 CPU 的热缓存。</p>
+<ul class="simple">
+<li>任务抢占</li>
+</ul>
+<p>Linux 2.6 版本调度器的另外一个优点是它允许抢占。这意味着当高优先级的任务准备运行时低优先级的任务就不能执行了。调度器会抢占低优先级的进程，并将这个进程放回其优先级列表中，然后重新进行调度。</p>
+<ol class="arabic simple" start="4">
+<li><strong>但是请等一下，还有更多功能呢!</strong></li>
+</ol>
+<p>似乎 2.6 版本调度器的 O(1) 特性和抢占特性还不够，这个调度器还提供了动态任务优先级和 SMP 负载均衡功能。下面就让我们来讨论一下这些功能都是什么，以及它们分别提供了哪些优点。</p>
+<ul class="simple">
+<li>动态任务优先级</li>
+</ul>
+<p>为了防止任务独占 CPU 从而会饿死其他需要访问 CPU 的任务，Linux 2.6 版本的调度器可以动态修改任务的优先级。这是通过惩罚 CPU 绑定的任务而奖励 I/O 绑定的任务实现的。I/O 绑定的任务通常使用 CPU 来设置 I/O，然后就睡眠等待 I/O 操作完成。这种行为为其他任务提供了 CPU 的访问能力。</p>
+<p>由于 I/O 绑定型的任务对于 CPU 访问来说是无私的，因此其优先级减少（奖励）最多 5 个优先级。CPU 绑定的任务会通过将其优先级增加最多 5 个优先级进行惩罚。</p>
+<p>任务到底是 I/O 绑定的还是 CPU 绑定的，这是根据交互性 原则确定的。任务的交互性指标是根据任务执行所花费的时间与睡眠所花费的时间的对比程度进行计算的。注意，由于 I/O 任务先对 I/O 进行调度，然后再进行睡眠，因此 I/O 绑定的任务会在睡眠和等待 I/O 操作完成上面花费更多的时间。这会提高其交互性指标。</p>
+<p>有一点值得注意，优先级的调整只会对用户任务进行，对于实时任务来说并不会对其优先级进行调整。</p>
+<ul class="simple">
+<li>SMP 负载均衡</li>
+</ul>
+<p>在 SMP 系统中创建任务时，这些任务都被放到一个给定的 CPU 运行队列中。通常来说，我们无法知道一个任务何时是短期存在的，何时需要长期运行。因此，最初任务到 CPU 的分配可能并不理想。</p>
+<p>为了在 CPU 之间维护任务负载的均衡，任务可以重新进行分发：将任务从负载重的 CPU 上移动到负载轻的 CPU 上。Linux 2.6 版本的调度器使用负载均衡（load balancing） 提供了这种功能。每隔 200ms，处理器都会检查 CPU 的负载是否不均衡；如果不均衡，处理器就会在 CPU 之间进行一次任务均衡操作。</p>
+<p>这个过程的一点负面影响是新 CPU 的缓存对于迁移过来的任务来说是冷的（需要将数据读入缓存中）。</p>
+<p>记住 CPU 缓存是一个本地（片上）内存，提供了比系统内存更快的访问能力。如果一个任务是在某个 CPU 上执行的，与这个任务有关的数据都会被放到这个 CPU 的本地缓存中，这就称为热的。如果对于某个任务来说，CPU 的本地缓存中没有任何数据，那么这个缓存就称为冷的。</p>
+<p>不幸的是，保持 CPU 繁忙会出现 CPU 缓存对于迁移过来的任务为冷的情况。</p>
+
+            </div>
+            <!-- /.entry-content -->
+    <hr/>
+    <script type="text/javascript">    
+            var duoshuo_identifier = 'inside-the-linux-scheduler';
+        var duoshuo_url = 'http://blackfox1983.github.io/posts/2016/08/28/inside-the-linux-scheduler/';
+    </script>
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="" data-title="Linux 调度器内幕" data-url=""></div>
+    <!-- 多说评论框 end -->
+    
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"blackfox1983"};
+        (function() {
+            var ds = document.createElement('script');
+            ds.type = 'text/javascript';ds.async = true;
+            ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+            ds.charset = 'UTF-8';
+            (document.getElementsByTagName('head')[0] 
+             || document.getElementsByTagName('body')[0]).appendChild(ds);
+        })();
+    </script>
+<!-- 多说公共JS代码 end -->
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+<div id="aboutme">
+        <p>
+            <img width="100%" class="img-thumbnail" src="/images/profile.jpg"/>
+        </p>
+    <p>
+        <strong>About MiLimin</strong><br/>
+        <a href="mailto:blackfox1983@163.com?subject=博客来信">联系我</a>
+    </p>
+</div>
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+              <ul class="list-group" id="social">
+                <li class="list-group-item"><a href="http://weibo.com/blackfox1983/"><i class="fa fa-我的微博-square fa-lg"></i> 我的微博</a></li>
+                <li class="list-group-item"><a href="http://www.baidu.com/"><i class="fa fa-百度-square fa-lg"></i> 百度</a></li>
+                <li class="list-group-item"><a href="http://google.com.hk/"><i class="fa fa-google-square fa-lg"></i> Google</a></li>
+                <li class="list-group-item"><a href="https://github.com/"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
+                <li class="list-group-item"><a href="http://blackfox1983.github.io/wheels/"><i class="fa fa-wheels基础库-square fa-lg"></i> Wheels基础库</a></li>
+              </ul>
+            </li>
+
+
+
+            <li class="list-group-item"><a href="http://blackfox1983.github.io/tags.html"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <ul class="list-group " id="tags">
+                    <li class="list-group-item tag-1">
+                        <a href="http://blackfox1983.github.io/tag/dong-tai-ku.html">
+                            动态库
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-1">
+                        <a href="http://blackfox1983.github.io/tag/jia-gou-she-ji.html">
+                            架构设计
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/cache.html">
+                            Cache
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/ioccc.html">
+                            IOCCC
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/o1diao-du-qi.html">
+                            O(1)调度器
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/core.html">
+                            core
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/write.html">
+                            write
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/writev.html">
+                            writev
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/dai-ma-hun-yao.html">
+                            代码混淆
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/nei-he.html">
+                            内核
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/bian-yi.html">
+                            编译
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/zhi-chang.html">
+                            职场
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/lian-jie.html">
+                            链接
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/jing-tai-ku.html">
+                            静态库
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/mian-shi.html">
+                            面试
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
+      <ul class="list-group" id="links">
+        <li class="list-group-item">
+            <a href="http://linuxtools-rst.readthedocs.org/zh_CN/latest/" target="_blank">
+                Linux工具指南
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://githowto.com/setup" target="_blank">
+                Git指南
+            </a>
+        </li>
+      </ul>
+    </li>
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2016 MiLimin
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>              <p><small>  <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="//i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a>
+    Content
+  licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>, except where indicated otherwise.
+</small></p>
+         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="http://blackfox1983.github.io/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="http://blackfox1983.github.io/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="http://blackfox1983.github.io/theme/js/respond.min.js"></script>
+
+    <script src="http://blackfox1983.github.io/theme/js/bodypadding.js"></script>
+<!-- 多说最新评论 start -->
+    <div class="ds-recent-comments" data-num-items="5" data-show-avatars="1" data-show-time="1" data-show-title="1" data-show-admin="1" data-excerpt-length="70"></div>
+<!-- 多说最新评论 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"blackfox1983"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+<!-- 多说公共JS代码 end -->
+
+</body>
+</html>
