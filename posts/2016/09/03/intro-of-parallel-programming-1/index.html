@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>让模块出core时继续运行 - BlackFox' Home</title>
+    <title>并行编程简述-什么是并行编程 - BlackFox' Home</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -10,20 +10,20 @@
 
     <link href="http://blackfox1983.github.io/images/favicon.jpg" rel="icon">
 
-<link rel="canonical" href="http://blackfox1983.github.io/posts/2015/10/18/continue-to-run-when-core-occurs/">
+<link rel="canonical" href="http://blackfox1983.github.io/posts/2016/09/03/intro-of-parallel-programming-1/">
 
         <meta name="author" content="MiLimin" />
-        <meta name="keywords" content="core" />
-        <meta name="description" content="当模块出core时，默认都会停止运行，尤其当一份脏数据到处传播时，服务几乎就处于不断的启停状态。如果让模块在出core时继续运行，该如何做到呢？" />
+        <meta name="keywords" content="并行编程" />
+        <meta name="description" content="并行编程已成为当前提高服务端程序性能的核心技术。这里逐渐介绍下并行编程的基础知识。首先介绍并行编程的概念以及其运行环境的介绍。" />
 
         <meta property="og:site_name" content="BlackFox' Home" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="让模块出core时继续运行"/>
-        <meta property="og:url" content="http://blackfox1983.github.io/posts/2015/10/18/continue-to-run-when-core-occurs/"/>
-        <meta property="og:description" content="当模块出core时，默认都会停止运行，尤其当一份脏数据到处传播时，服务几乎就处于不断的启停状态。如果让模块在出core时继续运行，该如何做到呢？"/>
-        <meta property="article:published_time" content="2015-10-18" />
+        <meta property="og:title" content="并行编程简述-什么是并行编程"/>
+        <meta property="og:url" content="http://blackfox1983.github.io/posts/2016/09/03/intro-of-parallel-programming-1/"/>
+        <meta property="og:description" content="并行编程已成为当前提高服务端程序性能的核心技术。这里逐渐介绍下并行编程的基础知识。首先介绍并行编程的概念以及其运行环境的介绍。"/>
+        <meta property="article:published_time" content="2016-09-03" />
             <meta property="article:section" content="技术" />
-            <meta property="article:tag" content="core" />
+            <meta property="article:tag" content="并行编程" />
             <meta property="article:author" content="MiLimin" />
 
 
@@ -97,10 +97,10 @@ BlackFox' Home            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://blackfox1983.github.io/posts/2015/10/18/continue-to-run-when-core-occurs/"
+                    <a href="http://blackfox1983.github.io/posts/2016/09/03/intro-of-parallel-programming-1/"
                        rel="bookmark"
-                       title="Permalink to 让模块出core时继续运行">
-                        让模块出core时继续运行
+                       title="Permalink to 并行编程简述-什么是并行编程">
+                        并行编程简述-什么是并行编程
                     </a>
                 </h1>
             </header>
@@ -110,7 +110,7 @@ BlackFox' Home            </a>
 <footer class="post-info">
     <span class="label label-default">Date</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2015-10-18T18:20:00+08:00"> 2015-10-18 18:20:00</time>
+        <i class="fa fa-calendar"></i><time datetime="2016-09-03T21:16:00+08:00"> 2016-09-03 21:16:00</time>
     </span>
 
 
@@ -122,16 +122,72 @@ BlackFox' Home            </a>
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://blackfox1983.github.io/tag/core.html">core</a>
+	<a href="http://blackfox1983.github.io/tag/bing-xing-bian-cheng.html">并行编程</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>模块在代码编写中，对于脏数据的容错不够（实际环境中异常数据的出现其实也是一种正常现象）或者程序bug，经常会引发程序出core，有时候还是线上一闪而过就不再出现的case，给RD、QA的追查带来不便，并且模块由于core不断启停，对于服务的稳定性也有影响。如果可以设计一种机制：</p>
+                <p>并行编程需要了解几个概念：</p>
 <ol class="arabic simple">
-<li>脏数据到来时，针对模块的bug会触发core，但是不应让模块停止，模块过滤掉脏数据继续运行。这样可以减少OP的运维成本，以及线上数据处理的稳定性。</li>
-<li>对于脏数据可以将其dump出来并做个监控，这样报警时，可以用这个数据做case复现，提高bug分析的效率。</li>
+<li><strong>串行</strong></li>
 </ol>
-<p>那么这样对于模块的维护将起到一个不错的作用。这里写了一个demo，示例代码如下：</p>
+<p>这是最基本的程序执行方式，串行程序在整个运行时只有一个调用栈和一个运行时上下文。</p>
+<ol class="arabic simple" start="2">
+<li><strong>并发（concurrency）</strong></li>
+</ol>
+<p>在多线程技术出现后比较常见的程序执行方式。多线程程序运行时，会有多个运行时上下文以及对应的多个调用栈。逻辑上多个线程同时发生，物理上是由操作系统调度，CPU某一时刻依然只执行一个线程的任务。</p>
+<ol class="arabic simple" start="3">
+<li><strong>并行（parallelism）</strong></li>
+</ol>
+<p>多核处理器出现后会越来越常见的程序执行方式，物理上多个任务可以同时运行，这个概念介于操作系统和体系架构之间，从操作系统而言，依然是调度多个线程去CPU执行，只不过有了多个CPU/核心，不同线程可以绑定从而完全占用一颗核心，所以从体系架构的角度，同一时刻是有多个任务同时运行；另外一个角度来看，如 <cite>多处理器程序</cite> 、 <cite>多核程序</cite> 都可以认为属于并行程序的范畴。</p>
+<div class="figure">
+<img alt="图1 并行 vs 并发" src="/images/concurrency_vs_parallelism.jpg" style="width: 330px;" />
+<p class="caption">图1 并行 vs 并发</p>
+</div>
+<p>从概念的范围看，并行 &lt; 并发，即并行的程序肯定是并发的，并发的程序不一定是并行的，但是，无论是逻辑上的并发（单处理器）还是物理上的并发（并行，多处理器），所面临的共享数据操作一致性问题是一样的，在很多情况下，多核编程可以近似认为是多线程编程，比如linux对多核的使用就是pthread亲和性绑定。</p>
+<ol class="arabic simple" start="4">
+<li><strong>并行编程的难点</strong></li>
+</ol>
+<p>并行编程的难点在于同时从宏观和微观两种角度分析问题，并能灵活在两种角度之间切换。</p>
+<p>在之前单处理器的世界里，计算机科学在编译器优化、处理器优化、多线程编程等方面有很深厚的积累，形成了对编程人员而言非常抽象的各种基础库，编程人员无须知道编译器、体系结构、多线程互斥同步等的实现细节。</p>
+<p>进入多处理器后，这个高度抽象的基础库还没有形成，虽然有一些并行库或者开发套件，但抽象程度还不够，依然需要编程人员能理解一定的底层系统结构细节和并行计算模型的能力和局限。</p>
+<ol class="arabic simple" start="5">
+<li><strong>多核体系架构</strong></li>
+</ol>
+<p>根据上文所述，讲到并行编程，不能不谈到多核系统。</p>
+<ul class="simple">
+<li>什么是多核处理器</li>
+</ul>
+<p>多内核处理器架构是指：芯片设计工程师在单个处理器中集成两个或多个 “执行内核（即计算引擎）”。多内核处理器可直接插入到单一处理器基座中。但是，操作系统会把它的每个执行内核作为独立的逻辑处理器，为其分配相应的执行资源。要利用多核处理器的运算能力，需要改写操作系统和编译器，广泛使用的vista, vin7，linux 等都能支持多核体系架构。</p>
+<ul class="simple">
+<li>多核发展趋势</li>
+</ul>
+<p>首先有一个问题：为什么微处理器要从单核转向多核? 答案是：<em>功耗问题</em> 限制了单核无法不断提高性能。</p>
+<p>有几个简单的公式可以说明这个问题：</p>
+<ul class="simple">
+<li>处理器性能 = 主频 * IPC。主频是指每秒时钟周期数，如1GHz表示每秒10亿个时钟周期。IPC则是每个时钟周期可以执行的指令数。处理器微架构的变化可以改变IPC，效率更高的微架构可以提高IPC从而提高处理器的性能。但是，对于同一代的架构，改良架构来提高IPC的幅度是非常有限的，所以在单核处理器时代通过提高处理器的主频来提高性能就成了唯一的手段。</li>
+<li>处理器功耗 正比于 电流*电压<sup>2</sup>*主频， 而“主频正比于电压”，所以处理器功耗 正比 主频<sup>3</sup>。因此，给处理器提高主频不是没有止境的，处理器的功耗和处理器内部的电流、电压的平方和主频成正比，而主频和电压成正比。通过主频提升性能，要面临功耗以3次方的指数增长问题，很快就会触及所谓的“频率墙”（ <cite>frequency wall</cite> ）。所以主频发展到一定程度后，自然转到重点依靠提高IPC来提升性能，提升IPC可以通过提高指令的并行度实现，提高并行度，一是提高微处理器微架构的并行度，二是采用多核架构。</li>
+<li>处理器功耗 正比于 电流*电压<sup>2</sup>*主频， 而“IPC正比于电流”，所以处理器功耗 正比于 IPC。由单核处理器增加到双核处理器，如果主频不变的话，IPC理论上可以提高一倍，功耗理论上也就最多提高一倍，因为功耗的增加是线性的。而实际情况是，双核处理器性能达到单核处理器同等性能的时候，前者的主频可以更低，因此功耗的下降也是指数方(三次方)下降的。反映到产品中就是双核处理器的起跳主频可以比单核处理器更低，性能更好。</li>
+</ul>
+<p>由此可见，将来处理器发展的趋势是：为了达到更高的性能，在采用相同微架构的情况下，可以增加处理器的内核数量同时维持较低的主频。这样设计的效果是，更多的并行提高IPC，较低的主频有效地控制了功耗的上升。</p>
+<p>虽然商用多核（multicore）和众核（many-core）系统越来越普遍，成本也越来越低，游戏设备、手机等移动设备也具备越来越多的核心，并发和并行越来越成为必要的技术手段，但多核程序的发展依然没有跟上硬件的发展，很多游戏引擎和网络引擎都还是单线程的。原因就是前文提到的多核编程的难度。</p>
+<ul class="simple">
+<li>一个多核处理器的例子</li>
+</ul>
+<div class="figure">
+<img alt="图2 一个多核处理器的例子" src="/images/intel_cpu_arch_1.png" style="width: 600px;" />
+</div>
+<div class="figure">
+<img alt="图2 一个多核处理器的例子" src="/images/intel_cpu_arch_1_intro1.png" style="width: 600px;" />
+</div>
+<div class="figure">
+<img alt="图2 一个多核处理器的例子" src="/images/intel_cpu_arch_1_intro2.png" style="width: 600px;" />
+<p class="caption">图2 一个多核处理器的例子</p>
+</div>
+<p>这是基于共享缓存的多核体系架构的一个例子，一共有10个核心，不需要深入了解，这张图唯一的目的是介绍一个概念，现代的处理器架构已经比几十年前的冯诺依曼体系复杂多了（各种box），里边稍微值得关注的是Cbox、Bbox，这两个组件是缓存控制器，负责非常核心的功能：<a class="reference external" href="http://blackfox1983.github.io/posts/2015/10/11/intro-of-cache-coherency/">缓存一致性</a>。最下图则是intel多核体系架构（双路）的缓存示意图，每个core拥有自己的L1和L2缓存，属于一个物理CPU的core共享L3缓存。不同cpu之间通过QPI交互L3数据。每个CPU有自己的内存控制器。对多核编程而言，缓存是非常重要的底层概念。</p>
+<ul class="simple">
+<li>绑核运行</li>
+</ul>
+<p>在Linux下，提供了CPU核亲和性机制，进程和线程都可以通过设置亲和性绑定到不同的CPU核上：</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -185,89 +241,59 @@ BlackFox' Home            </a>
 51
 52
 53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include &lt;stdio.h&gt;</span>
-<span class="cp">#include &lt;signal.h&gt;</span>
-<span class="cp">#include &lt;setjmp.h&gt;</span>
-<span class="cp">#include &lt;assert.h&gt;</span>
-<span class="cp">#include &lt;string.h&gt;</span>
-<span class="cp">#include &lt;unistd.h&gt;</span>
+54</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// 进程版本</span>
+<span class="cp">#include &lt;stdio.h&gt;</span>
+<span class="cp">#include &lt;sched.h&gt;</span>
 
-<span class="kt">jmp_buf</span> <span class="n">g_buf</span><span class="p">;</span> <span class="c1">//实现机制，主要关注点</span>
+<span class="kt">int</span> <span class="nf">set_process_to_cpu</span><span class="p">(</span><span class="kt">int</span> <span class="n">cpu_id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">cpu_set_t</span> <span class="n">mask</span><span class="p">;</span>
 
-<span class="kt">bool</span> <span class="n">g_quit</span><span class="p">;</span> <span class="c1">//退出标志</span>
+    <span class="n">CPU_ZERO</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mask</span><span class="p">);</span>
+    <span class="n">CPU_SET</span><span class="p">(</span><span class="n">cpu_id</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mask</span><span class="p">);</span>
 
-<span class="c1">//模块处理数据结构</span>
-<span class="k">struct</span> <span class="n">stru</span> <span class="p">{</span>
-    <span class="kt">int</span> <span class="n">len</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="kt">void</span> <span class="nf">handler</span><span class="p">(</span><span class="kt">int</span> <span class="n">sig</span><span class="p">)</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">sig</span> <span class="o">==</span> <span class="n">SIGINT</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">g_quit</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span> <span class="c1">//退出程序</span>
-        <span class="k">return</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">sched_setaffinity</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">mask</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">mask</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;set process affinity failed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
     <span class="p">}</span>
-
-    <span class="n">siglongjmp</span><span class="p">(</span><span class="n">g_buf</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">//实现机制，主要关注点</span>
-<span class="p">}</span>
-
-<span class="kt">void</span> <span class="nf">recv_pack</span><span class="p">(</span><span class="k">struct</span> <span class="n">stru</span><span class="o">*</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">assert</span><span class="p">(</span><span class="n">data</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">);</span>
-    <span class="k">static</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="n">data</span><span class="o">-&gt;</span><span class="n">len</span> <span class="o">=</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">?</span> <span class="mi">1</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="n">i</span><span class="o">++</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="c1">//将数据dump出来（如磁盘文件）</span>
-<span class="kt">void</span> <span class="nf">dump_pack</span><span class="p">(</span><span class="k">const</span> <span class="k">struct</span> <span class="n">stru</span><span class="o">&amp;</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;dump: %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">.</span><span class="n">len</span><span class="p">);</span>
-<span class="p">}</span>
-
-<span class="kt">void</span> <span class="nf">process</span><span class="p">(</span><span class="k">struct</span> <span class="n">stru</span><span class="o">*</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">assert</span><span class="p">(</span><span class="n">data</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">);</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="o">-&gt;</span><span class="n">len</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">//异常演示</span>
-        <span class="kt">int</span><span class="o">*</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-        <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">signal</span><span class="p">(</span><span class="n">SIGSEGV</span><span class="p">,</span> <span class="n">handler</span><span class="p">);</span>
-    <span class="n">signal</span><span class="p">(</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">handler</span><span class="p">);</span>
-
-    <span class="n">g_quit</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
-
-    <span class="k">struct</span> <span class="n">stru</span> <span class="n">data</span><span class="p">;</span>
-
-    <span class="c1">//实现机制，主要关注点</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">sigsetjmp</span><span class="p">(</span><span class="n">g_buf</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">dump_pack</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">g_quit</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">recv_pack</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data</span><span class="p">);</span>
-        <span class="n">process</span><span class="p">(</span><span class="o">&amp;</span><span class="n">data</span><span class="p">);</span>
-        <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="c1">//方便demo演示，避免刷屏</span>
-    <span class="p">}</span>
-
 
     <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="cm">/* just for testing getter</span>
+<span class="cm">    cpu_set_t get;</span>
+<span class="cm">    CPU_ZERO(&amp;get);</span>
+<span class="cm">    if (sched_getaffinity(0, sizeof(get), &amp;get) &lt; 0) {</span>
+<span class="cm">        printf(&quot;get process affinity failed\n&quot;);</span>
+<span class="cm">        return -1;</span>
+<span class="cm">    }</span>
+<span class="cm">    */</span>
+<span class="p">}</span>
+
+<span class="c1">// 线程版本</span>
+<span class="cp">#include &lt;stdio.h&gt;</span>
+<span class="cp">#include &lt;pthread.h&gt;</span>
+<span class="cp">#include &lt;sched.h&gt;</span>
+
+<span class="kt">void</span> <span class="nf">set_thread_to_cpu</span><span class="p">(</span><span class="kt">int</span> <span class="n">cpu_id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">cpu_set_t</span> <span class="n">mask</span><span class="p">;</span>
+
+    <span class="n">CPU_ZERO</span><span class="p">(</span><span class="o">&amp;</span><span class="n">mask</span><span class="p">);</span>
+    <span class="n">CPU_SET</span><span class="p">(</span><span class="n">cpu_id</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mask</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">pthread_setaffinity_np</span><span class="p">(</span><span class="n">pthread_self</span><span class="p">(),</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">mask</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">mask</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;set thread affinity failed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="cm">/* just for testing getter</span>
+<span class="cm">    cpu_set_t get;</span>
+<span class="cm">    CPU_ZERO(&amp;get);</span>
+<span class="cm">    if (pthread_getaffinity_np(pthread_self(), sizeof(get), &amp;get) &lt; 0) {</span>
+<span class="cm">        printf(&quot;get thread affinity failed\n&quot;);</span>
+<span class="cm">        return -1;</span>
+<span class="cm">    }</span>
+<span class="cm">    */</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table>
@@ -275,11 +301,11 @@ BlackFox' Home            </a>
             <!-- /.entry-content -->
     <hr/>
     <script type="text/javascript">    
-            var duoshuo_identifier = 'continue-to-run-when-core-occurs';
-        var duoshuo_url = 'http://blackfox1983.github.io/posts/2015/10/18/continue-to-run-when-core-occurs/';
+            var duoshuo_identifier = 'intro-of-parallel-programming-1';
+        var duoshuo_url = 'http://blackfox1983.github.io/posts/2016/09/03/intro-of-parallel-programming-1/';
     </script>
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="" data-title="让模块出core时继续运行" data-url=""></div>
+    <div class="ds-thread" data-thread-key="" data-title="并行编程简述-什么是并行编程" data-url=""></div>
     <!-- 多说评论框 end -->
     
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
