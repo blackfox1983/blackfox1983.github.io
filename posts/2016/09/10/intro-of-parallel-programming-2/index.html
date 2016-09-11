@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>并行编程简述-内存模型(1) - BlackFox' Home</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <link href="http://blackfox1983.github.io/images/favicon.jpg" rel="icon">
+
+<link rel="canonical" href="http://blackfox1983.github.io/posts/2016/09/10/intro-of-parallel-programming-2/">
+
+        <meta name="author" content="MiLimin" />
+        <meta name="keywords" content="并行编程" />
+        <meta name="description" content="内存模型对于并行编程非常重要，了解内存模型可以加深程序员对并行编程的掌握。本文则介绍并行编程中涉及的内存模型的原则操作部分的基础知识。" />
+
+        <meta property="og:site_name" content="BlackFox' Home" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="并行编程简述-内存模型(1)"/>
+        <meta property="og:url" content="http://blackfox1983.github.io/posts/2016/09/10/intro-of-parallel-programming-2/"/>
+        <meta property="og:description" content="内存模型对于并行编程非常重要，了解内存模型可以加深程序员对并行编程的掌握。本文则介绍并行编程中涉及的内存模型的原则操作部分的基础知识。"/>
+        <meta property="article:published_time" content="2016-09-10" />
+            <meta property="article:section" content="技术" />
+            <meta property="article:tag" content="并行编程" />
+            <meta property="article:author" content="MiLimin" />
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="http://blackfox1983.github.io/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="http://blackfox1983.github.io/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="http://blackfox1983.github.io/theme/css/pygments/colorful.css" rel="stylesheet">
+        <link href="http://blackfox1983.github.io/theme/css/html4css1.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://blackfox1983.github.io/theme/css/style.css" type="text/css"/>
+        <link href="http://blackfox1983.github.io/static/custom.css" rel="stylesheet">
+
+
+
+
+
+    <!-- 添加百度统计的支持代码 -->
+        <script src="http://blackfox1983.github.io/static/baidutongji.js" type="text/javascript"></script>
+
+</head>
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	<div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="http://blackfox1983.github.io/" class="navbar-brand">
+BlackFox' Home            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                    <li><a href="http://blackfox1983.github.io/">首页</a></li>
+                    <li><a href="/about.html">关于</a></li>
+                        <li class="active">
+                            <a href="http://blackfox1983.github.io/category/ji-zhu.html">技术</a>
+                        </li>
+                        <li >
+                            <a href="http://blackfox1983.github.io/category/sui-bi.html">随笔</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://blackfox1983.github.io/archives.html"><i class="fa fa-th-list"></i><span class="icon-label">Archives</span></a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+<!-- Banner -->
+<style>
+	#banner{
+	    background-image:url("http://blackfox1983.github.io/images/site_logo.gif");
+	}
+</style>
+
+<div id="banner">
+	<div class="container">
+		<div class="copy">
+			<h1>BlackFox' Home</h1>
+		</div>
+	</div>
+</div><!-- End Banner -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://blackfox1983.github.io/posts/2016/09/10/intro-of-parallel-programming-2/"
+                       rel="bookmark"
+                       title="Permalink to 并行编程简述-内存模型(1)">
+                        并行编程简述-内存模型(1)
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-09-10T22:34:00+08:00"> 2016-09-10 22:34:00</time>
+    </span>
+
+
+            <span class="label label-default">By</span>
+            <a href="http://blackfox1983.github.io/author/milimin.html"><i class="fa fa-user"></i> MiLimin</a>
+
+        <span class="label label-default">Category</span>
+        <a href="http://blackfox1983.github.io/category/ji-zhu.html">技术</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://blackfox1983.github.io/tag/bing-xing-bian-cheng.html">并行编程</a>
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <p>介绍内存模型，首先说明几个基础问题：</p>
+<ul class="simple">
+<li>什么是内存模型</li>
+</ul>
+<p>CPU硬件有自己的内存模型，不同的编程语言也有自己的内存模型。那么什么是内存模型？简单的说就是程序员、编程语言和硬件之间的一个契约，它保证了共享的内存地址里的值在需要的时候是可见的，且保证了机器执行代码的结果与程序员脑子里的预期是一致的。它最大的作用是取得可编程性与性能优化之间的一个平衡。</p>
+<ul class="simple">
+<li>并行编程为什么需要关注内存模型</li>
+</ul>
+<p>对于C/C++，目前缺少一个并发的内存模型，使得开发多核程序的程序员不得不面对内存操作的一些细节。（.net/java等基于虚拟机的语言其内存模型相对完善些）。</p>
+<ul class="simple">
+<li>并行编程需要关注内存模型的哪些方面</li>
+</ul>
+<p><cite>操作原子性、缓存一致性、顺序一致性</cite> 。非常重要的一点思想是：你的代码不一定如你想象中那样执行。</p>
+<ol class="arabic simple">
+<li><strong>操作原子性</strong></li>
+</ol>
+<p>原子性操作是指，在整个系统可见范围内，一个操作要不就没有发生，要不就执行完毕，没有中间状态出现。</p>
+<p>在多线程程序里，哪些操作具有天然的原子性？哪些操作需要原子操作原语的支持？原子操作原语底层机制是什么？要回答这些问题，首先需要从硬件讲起。以常见的X86 CPU来说，根据Intel的参考手册，它基于以下三种机制保证了操作原子性：</p>
+<ul class="simple">
+<li>Guaranteed atomic operations</li>
+<li>Bus locking, using the LOCK# signal and the LOCK instruction prefix</li>
+<li>Cache coherency protocols that ensure that atomic operations can be carried out on cached data structures (cache lock); this mechanism is present in the Pentium 4, Intel Xeon, and P6 family processors</li>
+</ul>
+<p>这三个机制相互独立，相辅相承。简单的理解起来：</p>
+<ul class="simple">
+<li>一些基本的内存读写操作是本身已经被硬件提供了原子性保证（例如读写单个字节的操作）。</li>
+<li>一些需要保证原子性但是没有被第（1）条机制提供支持的操作（例如read-modify-write）可以通过使用”LOCK#”来锁定总线，从而保证操作的原子性。原子操作原语是基于“LOCK#”总线锁实现的。</li>
+<li>因为很多内存数据是已经存放在L1/L2 cache中了，对这些数据的原子操作只需要与本地的cache打交道，而不需要与总线打交道，所以CPU就提供了 <cite>cache coherency</cite> 机制来保证其它的那些也cache了这些数据的CPU能读到最新的值。</li>
+</ul>
+<ol class="upperalpha simple">
+<li><em>硬件原子操作</em></li>
+</ol>
+<p>那么CPU对（1）中哪些基本的操作提供了原子性支持呢？根据Intel手册8.1.1节的介绍：</p>
+<p>从Intel486开始，以下的基本内存操作是原子的：</p>
+<ul class="simple">
+<li>Reading or writing a byte（一个字节的读写）</li>
+<li>Reading or writing a word aligned on a 16-bit boundary（对齐到16位边界的字的读写）</li>
+<li>Reading or writing a doubleword aligned on a 32-bit boundary（对齐到32位边界的双字的读写）</li>
+</ul>
+<p>从Pentium开始，除了之前支持的原子操作外又新增了以下原子操作：</p>
+<ul class="simple">
+<li>Reading or writing a quadword aligned on a 64-bit boundary（对齐到64位边界的四字的读写）</li>
+<li>16-bit accesses to uncached memory locations that fit within a 32-bit data bus（未缓存且在32位数据总线范围之内的内存地址的访问）</li>
+</ul>
+<p>从P6 family开始，除了之前支持的原子操作又新增了以下原子操作：</p>
+<ul class="simple">
+<li>Unaligned 16-, 32-, and 64-bit accesses to cached memory that fit within a cache line（对单个cache line中缓存地址的未对齐的16/32/64位访问）</li>
+</ul>
+<p>那么哪些操作是非原子的呢？</p>
+<p>Accesses to cacheable memory that are split across bus widths, cache lines, and page boundaries are not guaranteed to be atomic by the Intel Core 2 Duo, Intel® Atom™, Intel Core Duo, Pentium M, Pentium 4, Intel Xeon, P6 family, Pentium, and Intel486 processors.</p>
+<p>简单来说，那些被总线带宽、cache line 以及 page大小 给分隔开了的内存地址的访问不是原子的，你如果想保证这些操作是原子的，你就得求助于机制（2），对总线发出相应的控制信号才行。</p>
+<p>需要注意的是尽管从P6 family开始对一些非对齐的读写操作已经提供了原子性保障，但是非对齐访问是非常影响性能的，需要尽量避免。当然了，对于一般的程序员来说不需要太担心这个，因为大部分编译器会自动帮你完成内存对齐。</p>
+<p>下面一道题可以帮助理解硬件原子操作：</p>
+<p><strong>以下多线程对int型变量x的操作，哪几个需要进行同步（）：A. x=y; B. x++; C. ++x; D. x=1;</strong></p>
+<p>可以看下对应的反汇编代码：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// x = y;</span>
+<span class="n">mov</span> <span class="n">eax</span><span class="p">,</span><span class="n">dword</span> <span class="n">ptr</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span>
+<span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span><span class="n">eax</span>
+
+<span class="c1">// x++;</span>
+<span class="n">mov</span> <span class="n">eax</span><span class="p">,</span><span class="n">dword</span> <span class="n">ptr</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+<span class="n">add</span> <span class="n">eax</span><span class="p">,</span><span class="mi">1</span>
+<span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span><span class="n">eax</span>
+
+<span class="c1">// ++x;</span>
+<span class="n">mov</span> <span class="n">eax</span><span class="p">,</span><span class="n">dword</span> <span class="n">ptr</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+<span class="n">add</span> <span class="n">eax</span><span class="p">,</span><span class="mi">1</span>
+<span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span><span class="n">eax</span>
+
+<span class="c1">// x = 1;</span>
+<span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span><span class="mi">1</span>
+</pre></div>
+</td></tr></table><p>很显然，x=1是原子操作。因为x是int类型，32位CPU上int占32位，在X86上由硬件直接提供了原子性支持。实际上不管有多少个线程同时执行类似x=1这样的赋值语句，x的值最终还是被赋的值（而不会出现例如某个线程只更新了x的低16位然后被阻塞，另一个线程紧接着又更新了x的低24位然后又被阻塞，从而出现x的值被损坏了的情况）。</p>
+<p>再来看x++和++x。其实类似x++, x+=2, ++x这样的操作在多线程环境下是需要同步的。因为X86会按三条指令的形式来处理这种语句：从内存中读x的值到寄存器中，对寄存器加1，再把新值写回x所处的内存地址（见上面的反汇编代码）。</p>
+<p>例如有两个线程，它们按照如下顺序执行（注意读x和写回x是原子操作，两个线程不能同时执行）：</p>
+<table border="1" class="docutils">
+<caption>多线程执行 x++</caption>
+<colgroup>
+<col width="20%" />
+<col width="40%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Time</th>
+<th class="head">Thread1</th>
+<th class="head">Thread2</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>0</td>
+<td>load eax, x</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>1</td>
+<td>&nbsp;</td>
+<td>load eax, x</td>
+</tr>
+<tr><td>2</td>
+<td>add eax, 1</td>
+<td>add exa, 1</td>
+</tr>
+<tr><td>3</td>
+<td>store x, eax</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>4</td>
+<td>&nbsp;</td>
+<td>store x, eax</td>
+</tr>
+</tbody>
+</table>
+<p>我们会发现最终x的值会是1而不是2，因为Thread1的结果被覆盖掉了。这种情况需要借助概述中的机制2来实现操作原子性。</p>
+<p>最后来看看x=y，在X86上它包含两个操作：读取y至寄存器，再把该值写入x。读y的值这个操作本身是原子的，把值写入x也是原子的，但是两者合起来是不是原子操作呢？这里需要取决于上下文，如果只是简单的 {y = 1; x = y;} 是不需要原子保证的。</p>
+<p>举个反例，例如有两个线程，线程1要执行{y = 1; x = y;}，线程2要执行{y = 2; y = 3;}，假设它们按如下时间顺序执行</p>
+<table border="1" class="docutils">
+<caption>多线程执行 x=y</caption>
+<colgroup>
+<col width="20%" />
+<col width="40%" />
+<col width="40%" />
+</colgroup>
+<thead valign="bottom">
+<tr><th class="head">Time</th>
+<th class="head">Thread1</th>
+<th class="head">Thread2</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>0</td>
+<td>store y, 1</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>1</td>
+<td>&nbsp;</td>
+<td>store y, 2</td>
+</tr>
+<tr><td>2</td>
+<td>load eax, y</td>
+<td>&nbsp;</td>
+</tr>
+<tr><td>3</td>
+<td>&nbsp;</td>
+<td>store y, 3</td>
+</tr>
+<tr><td>4</td>
+<td>store x, eax</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>此时线程1的执行语句被线程2打断，导致最终线程1中x的值为2，而不是它原本想要的1。此时则需要加上相应的同步语句确保 y = 2 不会在线程1的两条语句之间发生。</p>
+<ol class="upperalpha simple" start="2">
+<li><em>总线锁</em></li>
+</ol>
+<p>对于硬件无法保证的原子操作，可以通过原子操作原语来保证，原子操作原语一般要基于总线锁实现：在x86 平台上，CPU提供了在指令执行期间对总线加锁的手段。CPU芯片上有一条引线 <cite>#HLOCK pin</cite> ，如果汇编语言的程序中在一条指令前面加上前缀 <cite>LOCK</cite> ，经过汇编以后的机器代码就使CPU在执行这条指令的时候把 <cite>#HLOCK pin</cite> 的电位拉低，持续到这条指令结束时放开，从而把总线锁住，这样同一总线上别的CPU就暂时不能通过总线访问内存了，保证了这条指令在多处理器环境中的原子性。</p>
+<p>常见的原子操作原语如下：</p>
+<ul class="simple">
+<li>CAS</li>
+</ul>
+<p>这是最常见的原子操作原语。在不同系统下可能有以下命名：<cite>CAS, compare-and-exchange, compare-and-set, std::atomic_compare_exchange, InterlockedCompareExchange, __sync_val_compare_and_swap, LOСK CMPXCHG and other</cite> 。</p>
+<p>在某些论文里经常看到 <cite>RMW （read-modify-write）</cite> ，CAS 就是一种RMW，其伪代码如下：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">T</span> <span class="n">compare</span><span class="o">-</span><span class="n">and</span><span class="o">-</span><span class="n">swap</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">location</span><span class="p">,</span> <span class="n">T</span> <span class="n">cmp</span><span class="p">,</span> <span class="n">T</span> <span class="n">xchg</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">do</span> <span class="n">atomically</span>
+    <span class="p">{</span>
+        <span class="n">T</span> <span class="n">val</span> <span class="o">=</span> <span class="o">*</span><span class="n">location</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cmp</span> <span class="o">==</span> <span class="n">val</span><span class="p">)</span>
+            <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="n">xchg</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">val</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</td></tr></table><p>如果该地址是期望的值 cmp，这种 RMW 会将一个新的值 xchg 放入地址 location，否则返回location的值。</p>
+<p>下面的 <cite>DPDK</cite> 的真实实现代码，第一句MPLOCKED其实是 <cite>lock</cite> 指令，就是锁总线，确保同一时间只有一个CPU线程能写这块内存，然后是 <cite>cmpxchgl</cite> 指令，用于比较并交换操作数，这个指令是原子的。写完之后，通过 <cite>cache一致性模型</cite> 保证所有核心看到和操作的是同一块实际内存的值而不是自己缓存内的值。最后一句 <cite>:&quot;memory&quot;</cite> 是内存屏障（内存屏障属于顺序一致性的内容，后续会单独介绍）。从这里可以看出，<cite>锁</cite> 实际上被移到了CPU内部实现。另外一个需要注意的是，目标内存dst必须是 <cite>volatile</cite> 修饰的，意思是编译器每次遇到这个变量都必须从内存读值，而不能从核心自己的缓存或寄存器读值。</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span>
+<span class="nf">rte_atomic32_cmpset</span><span class="p">(</span><span class="k">volatile</span> <span class="kt">uint32_t</span><span class="o">*</span> <span class="n">dst</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">exp</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">uint8_t</span> <span class="n">res</span><span class="p">;</span>
+
+    <span class="k">asm</span> <span class="k">volatile</span><span class="p">(</span>
+        <span class="n">MPLOCKED</span>
+        <span class="s">&quot;cmpxchgl %[src], %[dst];&quot;</span>
+        <span class="s">&quot;sete %[res];&quot;</span>
+        <span class="o">:</span> <span class="p">[</span><span class="n">res</span><span class="p">]</span> <span class="s">&quot;=a&quot;</span><span class="p">(</span><span class="n">res</span><span class="p">),</span>      <span class="cm">/* output */</span>
+        <span class="p">[</span><span class="n">dst</span><span class="p">]</span> <span class="s">&quot;=m&quot;</span><span class="p">(</span><span class="o">*</span><span class="n">dst</span><span class="p">)</span>
+        <span class="o">:</span> <span class="p">[</span><span class="n">src</span><span class="p">]</span> <span class="s">&quot;r&quot;</span><span class="p">(</span><span class="n">src</span><span class="p">),</span>       <span class="cm">/* input */</span>
+        <span class="s">&quot;a&quot;</span><span class="p">(</span><span class="n">exp</span><span class="p">),</span>
+        <span class="s">&quot;m&quot;</span><span class="p">(</span><span class="o">*</span><span class="n">dst</span><span class="p">)</span>
+        <span class="o">:</span> <span class="s">&quot;memory&quot;</span><span class="p">);</span>            <span class="cm">/* no-clobber list */</span>
+    <span class="k">return</span> <span class="n">res</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table><p>总结起来就是 <cite>volatile + lock指令 +  cmpxchgl指令 + 缓存一致性模型 + memory指令= 原子操作原语CAS</cite> 。</p>
+<ul class="simple">
+<li>fetch-and-add</li>
+</ul>
+<p><cite>fetch-and-add</cite> 也是一种RMW, 在不同系统下可能有以下命名：<cite>atomic_fetch_add, InterlockedExchangeAdd, LOСK XADD</cite> 。其伪代码如下：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">T</span> <span class="n">fetch</span><span class="o">-</span><span class="n">and</span><span class="o">-</span><span class="n">add</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">location</span><span class="p">,</span> <span class="n">T</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">do</span> <span class="n">atomically</span>
+    <span class="p">{</span>
+        <span class="n">T</span> <span class="n">val</span> <span class="o">=</span> <span class="o">*</span><span class="n">location</span><span class="p">;</span>
+        <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="n">val</span> <span class="o">+</span> <span class="n">x</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">val</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</td></tr></table><p>同一类型的原语还有 <cite>fetch-and-sub, fetch-and-and, fetch-and-or, fetch-and-xor</cite>。</p>
+<ul class="simple">
+<li>exchange</li>
+</ul>
+<p><cite>exchange</cite> 也是RMW， 同含义的有 <cite>atomic_exchange, XCHG</cite> 。伪代码如下：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">T</span> <span class="nf">exchange</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">location</span><span class="p">,</span> <span class="n">T</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+
+    <span class="k">do</span> <span class="n">atomically</span>
+    <span class="p">{</span>
+        <span class="n">T</span> <span class="n">val</span> <span class="o">=</span> <span class="o">*</span><span class="n">location</span><span class="p">;</span>
+        <span class="o">*</span><span class="n">location</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+        <span class="k">return</span> <span class="n">val</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table><p>将新值x放入位置location, 将该位置的旧值返回。</p>
+<ul class="simple">
+<li>atomic loads and stores</li>
+</ul>
+<p>这是非RMW的原子操作，类似的如 <cite>atomic_get, atomic_set, atomic_inc, atomic_dec</cite> 等。</p>
+
+            </div>
+            <!-- /.entry-content -->
+    <hr/>
+    <script type="text/javascript">    
+            var duoshuo_identifier = 'intro-of-parallel-programming-2';
+        var duoshuo_url = 'http://blackfox1983.github.io/posts/2016/09/10/intro-of-parallel-programming-2/';
+    </script>
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="" data-title="并行编程简述-内存模型(1)" data-url=""></div>
+    <!-- 多说评论框 end -->
+    
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"blackfox1983"};
+        (function() {
+            var ds = document.createElement('script');
+            ds.type = 'text/javascript';ds.async = true;
+            ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+            ds.charset = 'UTF-8';
+            (document.getElementsByTagName('head')[0] 
+             || document.getElementsByTagName('body')[0]).appendChild(ds);
+        })();
+    </script>
+<!-- 多说公共JS代码 end -->
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+<div id="aboutme">
+        <p>
+            <img width="100%" class="img-thumbnail" src="/images/profile.jpg"/>
+        </p>
+    <p>
+        <strong>About MiLimin</strong><br/>
+        <a href="mailto:blackfox1983@163.com?subject=博客来信">联系我</a>
+    </p>
+</div>
+<section class="well well-sm">
+    <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+              <ul class="list-group" id="social">
+                <li class="list-group-item"><a href="http://weibo.com/blackfox1983/"><i class="fa fa-我的微博-square fa-lg"></i> 我的微博</a></li>
+                <li class="list-group-item"><a href="http://www.baidu.com/"><i class="fa fa-百度-square fa-lg"></i> 百度</a></li>
+                <li class="list-group-item"><a href="http://google.com.hk/"><i class="fa fa-google-square fa-lg"></i> Google</a></li>
+                <li class="list-group-item"><a href="https://github.com/"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
+                <li class="list-group-item"><a href="http://blackfox1983.github.io/wheels/"><i class="fa fa-wheels基础库-square fa-lg"></i> Wheels基础库</a></li>
+              </ul>
+            </li>
+
+
+
+            <li class="list-group-item"><a href="http://blackfox1983.github.io/tags.html"><h4><i class="fa fa-tags fa-lg"></i><span class="icon-label">Tags</span></h4></a>
+                <ul class="list-group " id="tags">
+                    <li class="list-group-item tag-1">
+                        <a href="http://blackfox1983.github.io/tag/dong-tai-ku.html">
+                            动态库
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-1">
+                        <a href="http://blackfox1983.github.io/tag/bing-xing-bian-cheng.html">
+                            并行编程
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-1">
+                        <a href="http://blackfox1983.github.io/tag/jia-gou-she-ji.html">
+                            架构设计
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/cache.html">
+                            Cache
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/ioccc.html">
+                            IOCCC
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/o1diao-du-qi.html">
+                            O(1)调度器
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/core.html">
+                            core
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/write.html">
+                            write
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/writev.html">
+                            writev
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/dai-ma-hun-yao.html">
+                            代码混淆
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/nei-he.html">
+                            内核
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/bian-yi.html">
+                            编译
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/zhi-chang.html">
+                            职场
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/lian-jie.html">
+                            链接
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/jing-tai-ku.html">
+                            静态库
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/mian-shi.html">
+                            面试
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
+    <li class="list-group-item"><h4><i class="fa fa-external-link-square fa-lg"></i><span class="icon-label">Links</span></h4>
+      <ul class="list-group" id="links">
+        <li class="list-group-item">
+            <a href="http://linuxtools-rst.readthedocs.org/zh_CN/latest/" target="_blank">
+                Linux工具指南
+            </a>
+        </li>
+        <li class="list-group-item">
+            <a href="http://githowto.com/setup" target="_blank">
+                Git指南
+            </a>
+        </li>
+      </ul>
+    </li>
+    </ul>
+</section>
+            </aside>
+        </div>
+    </div>
+</div>
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2016 MiLimin
+            &middot; Powered by <a href="https://github.com/DandyDev/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>              <p><small>  <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="//i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a>
+    Content
+  licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>, except where indicated otherwise.
+</small></p>
+         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="http://blackfox1983.github.io/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="http://blackfox1983.github.io/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="http://blackfox1983.github.io/theme/js/respond.min.js"></script>
+
+    <script src="http://blackfox1983.github.io/theme/js/bodypadding.js"></script>
+<!-- 多说最新评论 start -->
+    <div class="ds-recent-comments" data-num-items="5" data-show-avatars="1" data-show-time="1" data-show-title="1" data-show-admin="1" data-excerpt-length="70"></div>
+<!-- 多说最新评论 end -->
+<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+<script type="text/javascript">
+var duoshuoQuery = {short_name:"blackfox1983"};
+    (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+    </script>
+<!-- 多说公共JS代码 end -->
+
+</body>
+</html>
