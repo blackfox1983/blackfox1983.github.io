@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>BlackFox' Home</title>
+    <title>并行编程简述-内存模型(2) - BlackFox' Home</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -10,15 +10,21 @@
 
     <link href="http://blackfox1983.github.io/images/favicon.jpg" rel="icon">
 
-<link rel="canonical" href="http://blackfox1983.github.io">
-        <meta name="author" content="MiLimin" />
+<link rel="canonical" href="http://blackfox1983.github.io/posts/2016/10/30/intro-of-parallel-programming-2-2/">
 
-    <!-- Open Graph tags -->
+        <meta name="author" content="MiLimin" />
+        <meta name="keywords" content="并行编程" />
+        <meta name="description" content="内存模型对于并行编程非常重要，了解内存模型可以加深程序员对并行编程的掌握。本文则介绍并行编程中涉及的内存模型的缓存一致性的基础知识。" />
+
         <meta property="og:site_name" content="BlackFox' Home" />
-        <meta property="og:type" content="website"/>
-        <meta property="og:title" content="BlackFox' Home"/>
-        <meta property="og:url" content="http://blackfox1983.github.io"/>
-        <meta property="og:description" content="BlackFox' Home"/>
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="并行编程简述-内存模型(2)"/>
+        <meta property="og:url" content="http://blackfox1983.github.io/posts/2016/10/30/intro-of-parallel-programming-2-2/"/>
+        <meta property="og:description" content="内存模型对于并行编程非常重要，了解内存模型可以加深程序员对并行编程的掌握。本文则介绍并行编程中涉及的内存模型的缓存一致性的基础知识。"/>
+        <meta property="article:published_time" content="2016-10-30" />
+            <meta property="article:section" content="技术" />
+            <meta property="article:tag" content="并行编程" />
+            <meta property="article:author" content="MiLimin" />
 
 
     <!-- Bootstrap -->
@@ -56,7 +62,7 @@ BlackFox' Home            </a>
             <ul class="nav navbar-nav">
                     <li><a href="http://blackfox1983.github.io/">首页</a></li>
                     <li><a href="/about.html">关于</a></li>
-                        <li >
+                        <li class="active">
                             <a href="http://blackfox1983.github.io/category/ji-zhu.html">技术</a>
                         </li>
                         <li >
@@ -87,67 +93,133 @@ BlackFox' Home            </a>
 <div class="container">
     <div class="row">
         <div class="col-sm-9">
-            <article>
-                <h2><a href="http://blackfox1983.github.io/posts/2015/08/23/guide-of-share-lib/">动态链接库使用规范</a></h2>
-                <div class="summary"><p class="first last">动态链接库相对静态库在使用、部署上更为便捷，但是由于使用不当也会造成一些意外。这里介绍一些常见的规范，帮助规避动态库使用上的风险。</p>
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="http://blackfox1983.github.io/posts/2016/10/30/intro-of-parallel-programming-2-2/"
+                       rel="bookmark"
+                       title="Permalink to 并行编程简述-内存模型(2)">
+                        并行编程简述-内存模型(2)
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2016-10-30T21:40:00+08:00"> 2016-10-30 21:40:00</time>
+    </span>
 
-                    <a class="btn btn-default btn-xs" href="http://blackfox1983.github.io/posts/2015/08/23/guide-of-share-lib/">more ...</a>
+
+            <span class="label label-default">By</span>
+            <a href="http://blackfox1983.github.io/author/milimin.html"><i class="fa fa-user"></i> MiLimin</a>
+
+        <span class="label label-default">Category</span>
+        <a href="http://blackfox1983.github.io/category/ji-zhu.html">技术</a>
+
+
+<span class="label label-default">Tags</span>
+	<a href="http://blackfox1983.github.io/tag/bing-xing-bian-cheng.html">并行编程</a>
+    
+</footer><!-- /.post-info -->                    </div>
                 </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://blackfox1983.github.io/posts/2015/08/08/ramble-of-rd-office/">程序员职场漫谈</a></h2>
-                <div class="summary"><p class="first last">周末和前公司的同事们一起小聚，其中一位同事吐槽北京IT环境太差，要离开北京回归家乡，引得我们一阵追问。</p>
+                <ol class="arabic simple">
+<li><strong>缓存一致性</strong></li>
+</ol>
+<p><cite>Cache Coherence</cite> 简称 CC， 缓存一致性协议是在共享缓存多处理器架构中确保最终一致性最突出、最重要的机制。这些协议在缓存线（cache-line）级别实现了对一致性的保证。缓存线是从主内存中读取数据和向内存中写入数据的缓存单位（至少从一致性机制的角度看是这样的）。商用处理器上三个最突出最重要的缓存一致性协议： <cite>MOESI、MESI、MESIF</cite> 的缩写都来自它们为缓存线定义的各种状态：Modified（已修改）, Owned（被占用）,Exclusive（独占的）, Shared（共享的）, Invalid（无效的）, 以及 Forward（转发的）。缓存一致性协议在对内存确保最终一致性的内存一致性机制的帮助下对这些状态进行管理。</p>
+<p>以下为部分处理器中采用的缓存一致性协议：</p>
+<p>Intel 奔腾：MESI 协议
+AMD Opteron：MOESI 协议
+Intel i7：MESIF 协议</p>
+<p>再介绍了缓存一致性的基本概念后，问题来了：为什么需要缓存CC？</p>
+<p>从 <a class="reference external" href="http://blackfox1983.github.io/posts/2016/09/03/intro-of-parallel-programming-1/">前文</a> 的体系结构图可以看到，一般每个核心都有一个私有的L1级和L2级Cache，同一个物理CPU上的多个核心共享一个L3级缓存，这样的设计是出于提高内存访问性能的考虑。但是这样就有一个问题了，每个核心之间的私有L1，L2级缓存之间需要同步。比如，核心1上的线程A对一个共享变量global_counter进行了加1操作，这个被写入的新值存到核心1的L1缓存里了；此时另一个核心2上的线程B要读global_counter了，但是核心2的L1缓存里的global_counter的值还是旧值，最新被写入的值现在还在核心1上。这就需要CPU有一个模块来保证，同一个内存的数据在同一时刻对任何对其可见的核心看来，数据是一致的，由图中可知，这种专门的组件就是缓存控制器 <cite>Cbox,Bbox</cite> 。</p>
+<p>此外，关于缓存一致性的详细介绍，可参见15年所作博文 <a class="reference external" href="http://blackfox1983.github.io/posts/2015/10/11/intro-of-cache-coherency/">Cache一致性简介</a> 。</p>
+<ol class="arabic simple" start="2">
+<li><strong>伪共享</strong></li>
+</ol>
+<ul class="simple">
+<li>定义</li>
+</ul>
+<p>从上述内容可以知道，缓存一致性协议操作的最小对象是缓存行，缓存行内数据的修改、写入内存、写入其他缓存等操作都会改变其状态，这样，在共享缓存多核架构里，数据结构如果组织不好，就非常容易出现多个核线程反复修改同一条缓存行的数据导致缓存行状态频繁变化从而导致严重性能问题，这就是伪共享现象。</p>
+<p>下图就是一个伪共享的例子，Core1上运行的线程想修改变量x，Core2上运行的线程想修改变量y，但x和y刚好在一个缓存行上。每个线程都要去竞争缓存行的所有权来更新变量。如果Core1获得了所有权，缓存子系统将会使Core2中对应的缓存行失效。当核心2获得了所有权然后执行更新操作，Core1就要使自己对应的缓存行失效。这会来来回回的经过L3缓存，大大影响了性能。如果互相竞争的核心位于不同的插槽，就要额外横跨插槽连接，问题可能更加严重。</p>
+<div class="figure">
+<img alt="图1 伪共享" src="/images/cache_coherence.png" style="width: 330px;" />
+<p class="caption">图1 伪共享</p>
+</div>
+<ul class="simple">
+<li>解决</li>
+</ul>
+<p>相比缓存行导致性能问题的严重性，解决这个问题的方案显得非常简单，这就是缓存行填充。通过填充缓存行，使得某个核心线程频繁操作的数据独享缓存行，这样就不会出现伪共享问题了。</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#define N_THR 8</span>
 
-                    <a class="btn btn-default btn-xs" href="http://blackfox1983.github.io/posts/2015/08/08/ramble-of-rd-office/">more ...</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://blackfox1983.github.io/posts/2015/08/08/thought-of-arch-of-strategy-plugins/">策略架构模型思考</a></h2>
-                <div class="summary"><p class="first last">在业务中经常会有策略和架构的区分，在系统中如何来实现策略和架构的隔离是架构设计需要考虑的问题。</p>
+<span class="k">struct</span> <span class="n">counter</span> <span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">value</span><span class="p">;</span>
+<span class="p">};</span>
 
-                    <a class="btn btn-default btn-xs" href="http://blackfox1983.github.io/posts/2015/08/08/thought-of-arch-of-strategy-plugins/">more ...</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://blackfox1983.github.io/posts/2015/07/12/how-to-interview-others/">怎么面试应聘者</a></h2>
-                <div class="summary"><p class="first last">怎么样面试应聘者才比较科学，这里是自己的一些观点</p>
+<span class="k">static</span> <span class="k">volatile</span> <span class="k">struct</span> <span class="n">counter</span> <span class="n">counters</span><span class="p">[</span><span class="n">N_THR</span><span class="p">];</span>
 
-                    <a class="btn btn-default btn-xs" href="http://blackfox1983.github.io/posts/2015/07/12/how-to-interview-others/">more ...</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://blackfox1983.github.io/posts/2015/07/12/design-discipline-of-arch/">架构设计原则</a></h2>
-                <div class="summary"><p class="first last">这是之前看到过的一些业务架构设计原则，记录下来慢慢体会</p>
+<span class="kt">void</span><span class="o">*</span> <span class="nf">thread</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">unused</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">leave</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">counters</span><span class="p">[</span><span class="n">UNIQUE_THREAD_ID</span><span class="p">].</span><span class="n">value</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
 
-                    <a class="btn btn-default btn-xs" href="http://blackfox1983.github.io/posts/2015/07/12/design-discipline-of-arch/">more ...</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://blackfox1983.github.io/posts/2015/07/11/how-to-obfuscate-c-code/">怎么混淆C代码</a></h2>
-                <div class="summary"><p class="first last">如何写一段big很高的代码呢？这里是自己的一些心得以及 <a class="reference external" href="http://blackfox1983.github.io/about.html">示例代码</a></p>
+    <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table><p>32位机下 <cite>long long</cite> 是8字节，一个缓存行64字节，则可以存储8个counter, 这样最差的情况下同时会有8个线程争夺同一个缓存行的操作权，性能会非常低。解决方式非常简单，如下所示，每个counter变量增加一个填充变量pad，使得一个counter变量刚好是一个缓存行大小，这样数组counters每个元素占用一个缓存行，所有线程独占自己的缓存行，避免了伪共享问题。（性能至少提高 <strong>4X</strong>）</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">struct</span> <span class="n">counter</span> <span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">value</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">pad</span><span class="p">[</span><span class="mi">64</span> <span class="o">-</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span><span class="p">)];</span>
+<span class="p">};</span>
+</pre></div>
+</td></tr></table>
+            </div>
+            <!-- /.entry-content -->
+    <hr/>
+    <script type="text/javascript">    
+            var duoshuo_identifier = 'intro-of-parallel-programming-2-2';
+        var duoshuo_url = 'http://blackfox1983.github.io/posts/2016/10/30/intro-of-parallel-programming-2-2/';
+    </script>
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="" data-title="并行编程简述-内存模型(2)" data-url=""></div>
+    <!-- 多说评论框 end -->
+    
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:"blackfox1983"};
+        (function() {
+            var ds = document.createElement('script');
+            ds.type = 'text/javascript';ds.async = true;
+            ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+            ds.charset = 'UTF-8';
+            (document.getElementsByTagName('head')[0] 
+             || document.getElementsByTagName('body')[0]).appendChild(ds);
+        })();
+    </script>
+<!-- 多说公共JS代码 end -->
+        </article>
+    </section>
 
-                    <a class="btn btn-default btn-xs" href="http://blackfox1983.github.io/posts/2015/07/11/how-to-obfuscate-c-code/">more ...</a>
-                </div>
-            </article>
-            <hr/>
-            <article>
-                <h2><a href="http://blackfox1983.github.io/posts/2015/06/28/settle-in-github/">博客安家GitHub了</a></h2>
-                <div class="summary"><p class="first last">经过一段时间的了解和研究，决定将博客空间重新部署在Github</p>
-
-                    <a class="btn btn-default btn-xs" href="http://blackfox1983.github.io/posts/2015/06/28/settle-in-github/">more ...</a>
-                </div>
-            </article>
-            <hr/>
-
-        <ul class="pager">
-                <li class="previous"><a href="http://blackfox1983.github.io/index.html">&larr; Newer</a></li>
-                <li class="next disabled"><a href="#">Older &rarr;</a></li>
-        </ul>
         </div>
         <div class="col-sm-3" id="sidebar">
             <aside>
