@@ -131,9 +131,9 @@ BlackFox' Home            </a>
 </ol>
 <p><cite>Cache Coherence</cite> 简称 CC， 缓存一致性协议是在共享缓存多处理器架构中确保最终一致性最突出、最重要的机制。这些协议在缓存线（cache-line）级别实现了对一致性的保证。缓存线是从主内存中读取数据和向内存中写入数据的缓存单位（至少从一致性机制的角度看是这样的）。商用处理器上三个最突出最重要的缓存一致性协议： <cite>MOESI、MESI、MESIF</cite> 的缩写都来自它们为缓存线定义的各种状态：Modified（已修改）, Owned（被占用）,Exclusive（独占的）, Shared（共享的）, Invalid（无效的）, 以及 Forward（转发的）。缓存一致性协议在对内存确保最终一致性的内存一致性机制的帮助下对这些状态进行管理。</p>
 <p>以下为部分处理器中采用的缓存一致性协议：</p>
-<p>Intel 奔腾：MESI 协议
-AMD Opteron：MOESI 协议
-Intel i7：MESIF 协议</p>
+<p>Intel 奔腾：MESI 协议</p>
+<p>AMD Opteron：MOESI 协议</p>
+<p>Intel i7：MESIF 协议</p>
 <p>再介绍了缓存一致性的基本概念后，问题来了：为什么需要缓存CC？</p>
 <p>从 <a class="reference external" href="http://blackfox1983.github.io/posts/2016/09/03/intro-of-parallel-programming-1/">前文</a> 的体系结构图可以看到，一般每个核心都有一个私有的L1级和L2级Cache，同一个物理CPU上的多个核心共享一个L3级缓存，这样的设计是出于提高内存访问性能的考虑。但是这样就有一个问题了，每个核心之间的私有L1，L2级缓存之间需要同步。比如，核心1上的线程A对一个共享变量global_counter进行了加1操作，这个被写入的新值存到核心1的L1缓存里了；此时另一个核心2上的线程B要读global_counter了，但是核心2的L1缓存里的global_counter的值还是旧值，最新被写入的值现在还在核心1上。这就需要CPU有一个模块来保证，同一个内存的数据在同一时刻对任何对其可见的核心看来，数据是一致的，由图中可知，这种专门的组件就是缓存控制器 <cite>Cbox,Bbox</cite> 。</p>
 <p>此外，关于缓存一致性的详细介绍，可参见15年所作博文 <a class="reference external" href="http://blackfox1983.github.io/posts/2015/10/11/intro-of-cache-coherency/">Cache一致性简介</a> 。</p>
