@@ -175,7 +175,7 @@ BlackFox' Home            </a>
 </li>
 </ol>
 <p>dlopen的打开参数必须为 <cite>RTLD_LAZY | RTLD_LOCAL</cite> 或 <cite>RTLD_NOW | RTLD_LOCAL</cite> 。这里需要注意的是 <cite>RTLD_DEEPBIND</cite> 参数本该使用，但是在gcc4下存在一个官方已明确的BUG（好吧，不谈也罢:(）。</p>
-<p>以上措施仍不够，因为这个仅仅是保证查找插件so中的符号以保证使用so中的变量、函数等。如libpolicy.so中依赖了liba.a中，那么在X模块调用了libpolicy.so中的接口(如 <cite>int policy(void*)</cite> )后，则policy(void*)内部实现调用的函数代码会在so中中查找，若查找不到，则会提示未解析的符号或其他错误，模块直接退出（额，不优雅是不……）。</p>
+<p>以上措施仍不够，因为这个仅仅是保证查找插件so中的符号以保证使用so中的变量、函数等。如libpolicy.so中依赖了liba.a中，那么在X模块调用了libpolicy.so中的接口(如 <cite>int policy(void*)</cite> )后，则policy(void*)内部实现调用的函数代码会在so中中查找，若查找不到，则会提示未解析的符号或其他错误，模块直接退出。</p>
 <p>因此，在策略团队替工libpolicy.so的时候，还需要在libpolicy.so中将对应的依赖库全部链接到so中。额，这里有个坑，在linux下采用g++编译静态库的时候，是否增加链接参数，根本没有任何的错误提示……。即libpolicy.so编译的时候，如依赖liba.a，则编译参数是否增加 <cite>-la</cite> g++都没有任何的正确或错误提示。</p>
 <p>那么如何解决呢？这里有一个比较奇葩但是很有效的办法：静态库。
 即在编译libpolicy.so的同时，也编译发布一个同等版本的libpolicy.a，其后在sample（使用libpolicy进行编译开发的可运行模块）中先使用libpolicy.a进行编译链接，若编译出来的文件可运行，则对应的 <cite>-L</cite> 以及 <cite>-l</cite> 参数为对应so在链接时需要使用的参数。方法虽然很ugly，但是还是很有效的。</p>
@@ -186,7 +186,7 @@ BlackFox' Home            </a>
 </li>
 <li><p class="first">X模块提供给策略的接口往往是一个基类的虚函数，具体策略继承该接口重写逻辑。实际调用时，X模块通过lib插件获得这个基类的一个对象，进行多线程环境下的调用，因此需要策略所写的逻辑需要保证线程安全。这个对于天天做数据策略分析的同学来说，增加了不必要的负担。</p>
 </li>
-<li><p class="first">插件热插拔。静态库就不要考虑吧……动态库，据说是可以的，但是也需要好好调研下。（不管怎么说，维护复杂度加了）</p>
+<li><p class="first">插件热插拔。动态库可以支持热插拔，但是鉴于其复杂度，一般不建议使用。</p>
 </li>
 <li><dl class="first docutils">
 <dt>相比动态库，静态库的优点：</dt>
@@ -198,8 +198,8 @@ BlackFox' Home            </a>
 </dl>
 </li>
 </ul>
-<p>从上可以看到，so使用维护成本还是很高的。据说Google内部基本上是静态库，不会使用动态库。或者这也是其中的因素吧。 :)</p>
-<p class="last">说到lib插件，其实还有一个无法解决的问题，由于策略(libpolicy.a或libpolicyso)一般是不同的业务开发维护的，因此若其中一个遇到了问题（如某个policy把堆栈写乱core了，或者自己代码写的挫……），会增加一些互相扯皮的可能，对其他插件的稳定性也有影响。</p>
+<p>从上可以看到，so使用维护成本还是很高的。在Google内部，则是全部采用了源码编译（一般使用静态库时，全部采用源码编译的方式）。</p>
+<p class="last">谈到lib插件，其实还有一个无法解决的问题，由于策略(libpolicy.a或libpolicyso)一般是不同的业务开发维护的，因此若其中一个遇到了问题（如某个policy把堆栈写乱core了，或者代码质量低），会增加一些互相扯皮的可能，对其他插件的稳定性也有影响。</p>
 </dd>
 </dl>
 </li>
