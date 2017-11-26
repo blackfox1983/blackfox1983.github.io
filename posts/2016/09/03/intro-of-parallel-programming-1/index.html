@@ -241,9 +241,9 @@ BlackFox' Home            </a>
 51
 52
 53
-54</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// 进程版本</span>
-<span class="cp">#include &lt;stdio.h&gt;</span>
-<span class="cp">#include &lt;sched.h&gt;</span>
+54</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">// 进程版本</span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sched.h&gt;</span><span class="cp"></span>
 
 <span class="kt">int</span> <span class="nf">set_process_to_cpu</span><span class="p">(</span><span class="kt">int</span> <span class="n">cpu_id</span><span class="p">)</span> <span class="p">{</span>
     <span class="kt">cpu_set_t</span> <span class="n">mask</span><span class="p">;</span>
@@ -269,9 +269,9 @@ BlackFox' Home            </a>
 <span class="p">}</span>
 
 <span class="c1">// 线程版本</span>
-<span class="cp">#include &lt;stdio.h&gt;</span>
-<span class="cp">#include &lt;pthread.h&gt;</span>
-<span class="cp">#include &lt;sched.h&gt;</span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;pthread.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;sched.h&gt;</span><span class="cp"></span>
 
 <span class="kt">void</span> <span class="nf">set_thread_to_cpu</span><span class="p">(</span><span class="kt">int</span> <span class="n">cpu_id</span><span class="p">)</span> <span class="p">{</span>
     <span class="kt">cpu_set_t</span> <span class="n">mask</span><span class="p">;</span>
@@ -322,7 +322,6 @@ BlackFox' Home            </a>
                 <li class="list-group-item"><a href="http://www.baidu.com/"><i class="fa fa-百度-square fa-lg"></i> 百度</a></li>
                 <li class="list-group-item"><a href="http://google.com.hk/"><i class="fa fa-google-square fa-lg"></i> Google</a></li>
                 <li class="list-group-item"><a href="https://github.com/"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
-                <li class="list-group-item"><a href="http://blackfox1983.github.io/wheels/"><i class="fa fa-wheels基础库-square fa-lg"></i> Wheels基础库</a></li>
               </ul>
             </li>
 
@@ -358,6 +357,11 @@ BlackFox' Home            </a>
                     <li class="list-group-item tag-3">
                         <a href="http://blackfox1983.github.io/tag/o1diao-du-qi.html">
                             O(1)调度器
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/ubuntu.html">
+                            Ubuntu
                         </a>
                     </li>
                     <li class="list-group-item tag-3">

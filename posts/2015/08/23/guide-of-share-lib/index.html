@@ -132,10 +132,10 @@ BlackFox' Home            </a>
 <ol class="arabic simple">
 <li><strong>开发</strong></li>
 </ol>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>对外接口</dt>
-<dd><ol class="first last arabic simple">
+<dd><ol class="first last arabic">
 <li>采用 <cite>extern &quot;C&quot;</cite> 的方式声明对外接口。动态链接库多是采用 <cite>dlopen</cite> 方式进行使用，<cite>dlopen</cite> 打开的动态库使用 dlym` 获取接口的时候，如果动态库采用g++编译，并且接口没有使用 <cite>extern &quot;C&quot;</cite> 的方式，获取接口需要 <cite>dlym(handler, &quot;__fooiv&quot;)</cite> 这样的方式获取，这在使用和维护上都会带来不便。</li>
 <li>非对外的接口采用static的方式。由于存在 <cite>rdynamic, RTLD_GLOBAL</cite> 等可以把接口提升为全局可见的参数存在，非static的接口也可能会被其他的动态库所用到。</li>
 </ol>
@@ -144,10 +144,9 @@ BlackFox' Home            </a>
 </li>
 <li><dl class="first docutils">
 <dt>版本控制</dt>
-<dd><p class="first last">动态库和静态库有一个很大的区别就是动态库是需要用来上线部署，不像静态库那样在编译机上就已经被链接进可执行程序中。所以需要有一套机制可以比较方便进行控制。
+<dd>动态库和静态库有一个很大的区别就是动态库是需要用来上线部署，不像静态库那样在编译机上就已经被链接进可执行程序中。所以需要有一套机制可以比较方便进行控制。
 1. 对于动态库 xxx.so， 在最后的产出物中需要被命名为 xxx.so.1.0.0.0, 其中1.0.0.0为动态库的4位版本号 这样的好处是动态库在上线的时候一眼就可以看出是否是对应的版本号，另外在一些特殊的条件下也可以并存有多个相同的但版本不同的库. 在使用的时候可以使用一个xxx.so的软连接链到xxx.so.1.0.0.0上，然后程序中使用 dlopen(&quot;xxx.so&quot;)的方式使用。
-#. 动态链接库本身可以做成可执行的，产出可参考如下：</p>
-</dd>
+#. 动态链接库本身可以做成可执行的，产出可参考如下：</dd>
 </dl>
 </li>
 </ul>
@@ -155,21 +154,21 @@ BlackFox' Home            </a>
 2
 3
 4
-5</pre></div></td><td class="code"><div class="highlight"><pre>ld.so: /lib64/ld-linux-x86-64.so.2
+5</pre></div></td><td class="code"><div class="highlight"><pre><span></span>ld.so: /lib64/ld-linux-x86-64.so.2
 svn: xxx/xxx/xxx
-Brief: <span class="nb">test </span><span class="k">for</span> so
-BuildDate: Aug <span class="m">22</span> <span class="m">2015</span> 19:57:55
-Version: 1.0.0.0
+Brief: <span class="nb">test</span> <span class="k">for</span> so
+BuildDate: Aug <span class="m">22</span> <span class="m">2015</span> <span class="m">19</span>:57:55
+Version: <span class="m">1</span>.0.0.0
 </pre></div>
 </td></tr></table><p>不过在一些特殊情况下，比如.so使用了一些全局变量，而这些extern的全局变量是由调用它的二进制程序提供的，这样的.so在编译和被二进制程序载入都是可以正常进行，但是不能独立运行的，这个时候没有全局变量的具体实现，二进制程序不能被载入内存。对于这些情况可以不要求一定要运行，但还是建议要能够被命名为 xxx.so.1.0.0.0。或者单独实现一个mock主进程的 <cite>xxx_version.cpp</cite> （xxx为库名），加载so以show-version。</p>
 <ol class="arabic simple" start="2">
 <li><strong>编码</strong></li>
 </ol>
 <p>这部分主要是一些二进制兼容方面的建议。</p>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>二进制与so之间, so与so之间的数据交换尽量采用指针的形式,不要使用具体的结构体或者class。</dt>
-<dd><ol class="first last arabic simple">
+<dd><ol class="first last arabic">
 <li>不要直接操作结构体, 全部采用接口的形式.当二进制与so所使用结构体不相同的时候,直接操作会出现问题.</li>
 <li>尽量保证so使用的各种库与二进制使用的各种库版本一致(本质上是保证二进制兼容)</li>
 <li>so注意跟随升级. 二进制程序所依赖的各种版本最好要低于so所用的版本. 最好在二进制升级后(包括依赖库的升级),把所有的.so都重新编译一编.</li>
@@ -194,21 +193,21 @@ Version: 1.0.0.0
 13
 14
 15
-16</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">//1.0.0版本</span>
-<span class="k">struct</span> <span class="kt">demo_t</span> <span class="p">{</span>
+16</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">//1.0.0版本</span>
+<span class="k">struct</span> <span class="n">demo_t</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
     <span class="kt">int</span> <span class="n">b</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="c1">//后续升级为1.0.1版本</span>
-<span class="k">struct</span> <span class="kt">demo_t</span> <span class="p">{</span>
+<span class="k">struct</span> <span class="n">demo_t</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">a</span><span class="p">;</span>
     <span class="kt">int</span> <span class="n">b</span><span class="p">;</span>
     <span class="kt">int</span> <span class="n">c</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="c1">//对于如下情况</span>
-<span class="kt">demo_t</span> <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="n">so_func_create</span><span class="p">();</span> <span class="c1">//so_func_create为so提供的对外接口函数，返回一个demo_t指针</span>
+<span class="n">demo_t</span> <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="n">so_func_create</span><span class="p">();</span> <span class="c1">//so_func_create为so提供的对外接口函数，返回一个demo_t指针</span>
 <span class="kt">int</span> <span class="n">u</span> <span class="o">=</span> <span class="n">a</span><span class="o">-&gt;</span><span class="n">c</span><span class="p">;</span>
 </pre></div>
 </td></tr></table><p>当so的版本比二进制的版本要低的时候,这个时候就会出现问题。因为 <cite>so_func_create</cite> 产生的 <cite>demo_t</cite> 是按照升级前的结果给出的，结构体长度只有2个int，没有其中c这个成员, 但是在二进制中是按照存在c来进行访问的，这个时候就造成数据的越界访问。所以二进制依赖的版本不应该高于so所依赖的各种库版本(包括二进制自身)，毕竟我们可以做到高版本对低版本的兼容, 但是无法作到低版本对高版本的兼容。</p>
@@ -221,14 +220,14 @@ Version: 1.0.0.0
 6
 7
 8
-9</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">//demo的代码中:</span>
-<span class="kt">void</span> <span class="nf">demo_todo</span><span class="p">(</span><span class="kt">demo_t</span> <span class="o">*</span><span class="n">a</span><span class="p">)</span> <span class="p">{</span>
+9</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">//demo的代码中:</span>
+<span class="kt">void</span> <span class="nf">demo_todo</span><span class="p">(</span><span class="n">demo_t</span> <span class="o">*</span><span class="n">a</span><span class="p">)</span> <span class="p">{</span>
       <span class="n">a</span><span class="o">-&gt;</span><span class="n">c</span><span class="o">++</span><span class="p">;</span>
       <span class="c1">//.....</span>
 <span class="p">}</span>
 
-<span class="kt">demo_t</span> <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="n">so_func_create</span><span class="p">();</span>
-<span class="n">memset</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">demo_t</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">demo_t</span> <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="n">so_func_create</span><span class="p">();</span>
+<span class="n">memset</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">demo_t</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
 <span class="n">demo_todo</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
 </pre></div>
 </td></tr></table><p>即使在so版本比二进制版本要高的情况下，这里也存在问题，在二进制中 <cite>demo_t</cite> 的长度是2个int的长度，但是实际上3个int的长度，这样memset的时候想清零，其实还漏了一个c没有被清零。在后面的操作就出现了问题，这里对于内存元素的操作最好用接口（如 <cite>a-&gt;zero_self()</cite> ）进行内部操作，而不是直接暴露数据。</p>
@@ -237,10 +236,10 @@ Version: 1.0.0.0
 <li><strong>使用</strong></li>
 </ol>
 <p>这里的使用指的是其它二进制程序使用已有的 <cite>.so</cite> 。</p>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>dlopen的时候不要使用RTLD_GLOBAL</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>RTLD_GLOBAL会导致一个dlopen的动态库符号表全局可见可能会到致其他的动态库在运行时的行为改变</li>
 <li>如果遇到一些情况确实需要so之间互相调用，需要注意是否会导致其他问题</li>
 </ul>
@@ -248,13 +247,13 @@ Version: 1.0.0.0
 </dl>
 </li>
 </ul>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>对于动态库、静态库混合编译的要求, 建议采用下面两种方案</dt>
 <dd><ul class="first last">
 <li><dl class="first docutils">
 <dt>编译二进制使用 <cite>-rdynamic</cite> (必要的时候采用 <cite>-Wl,--whole-archive -lxxxx -Wl, --no-whole-archive</cite> 把整个库导入)，动态链接库不要链接主程序中有的库,编译时采用与主程序相同版本的库</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>动态库编译的时候尽量不要去链接基础静态库</li>
 <li>如果动态库链接了其他的静态库，在二进制编译的时候可能造成符号表混乱,无论是采用dlopen方式还是采用直接链接的方式，由于动态库和另外的动态库或者 <cite>.a</cite> 中都存在一个相同的符号，这个时候如果存在版本不一致就可能出现一些莫名其妙的错误</li>
 <li>另外就是规避一些库中存在全局变量，造成不同的库中使用不同的本地变量但又用了相同的全局变量造成变量逻辑不一致</li>
@@ -264,7 +263,7 @@ Version: 1.0.0.0
 </li>
 <li><dl class="first docutils">
 <dt>编译二进制不使用 <cite>-rdynamic</cite> , 动态库链接的使用加上 <cite>-Wl,-Bsymbolic</cite> 参数并且 <cite>.so</cite> 链接所有需要的库，所需要的全局参数通过指针数据在初始化的时候进行传递，比如log, 把东西传到.so，.so里面再open一次(有些32位环境中由于不需要-fPIC参数可能本身不会有问题，但64位下二进制和so中全局变量会用到同一块区域）</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li><cite>-rdynamic</cite> 参数导致二进制程序中的符号变成全局的，如果动态库和二进制程序有同名接口那么会导致动态库调用二进制程序中的同名接口。</li>
 <li>如果主程序和动态库都使用了一个库的不同版本，会造成在使用动态库的时候实际调用的是主程序中的版本，而不同版本由于库内部实现的变化可能造成链接的错位从而导致链接的库的使用错误。</li>
 <li><cite>-Wl,-Bsymbolic</cite> 参数可以强制把所有的extern的对外全局变量变成在主程序和动态库中都是独立的内存空间,如log库中使用了一些全局变量。</li>
@@ -280,7 +279,7 @@ Version: 1.0.0.0
 </li>
 <li><dl class="first docutils">
 <dt>再次载入 <cite>.so</cite> 程序，需要先把原来的handle用 <cite>dlclose</cite> 掉后再重新载入</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li><cite>dlopen</cite> 的时候如果所要的动态库已经被占用，再次 <cite>dlopen</cite> 的时候只是做了引用记数，并没有真的载入 <cite>.so</cite> 哪怕so已经改变。</li>
 </ul>
 </dd>
@@ -288,7 +287,7 @@ Version: 1.0.0.0
 </li>
 <li><dl class="first docutils">
 <dt>动态库发布的时候需要把动态链接发布到某个特定目录下，使用软链接将 <cite>xxx.so</cite> 指向 <cite>xxx.so.1.0.0.0</cite></dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>虽然我们自己编写的动态链接库多数情况下都是使用 <cite>dlopen</cite> 方式打开使用，但还是有些情况下会出现将动态库像静态库那样链接使用，这时候考虑链接方便需要采用统一的名字。比如 <cite>main</cite> 中使用 <cite>dlopen</cite> 方式打开 <cite>libx.so</cite> 和 <cite>liby.so</cite> , 但 <cite>libx.so</cite> 和 <cite>liby.so</cite> 又需要使用同样的接口而 <cite>main</cite> 又用不到这样的接口，这个时候就可以采用将公用的接口提取出来做为一个动态库，让 <cite>main</cite> 像静态库那样链接使用。</li>
 </ul>
 </dd>
@@ -296,7 +295,7 @@ Version: 1.0.0.0
 </li>
 <li><dl class="first docutils">
 <dt>不要随意使用全局变量</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>由于动态库中全局变量的行为受到编译参数的控制, 全局变量在使用中很容易会造成困惑，比如全局变量两次初始化等问题, (注意: 类中的static成员相当于全局变量，也存在这些问题)。</li>
 <li>如果需要使用全局数据，尽量采用单例模式的方式, 声明为 <cite>static</cite> 变量, 通过一个全局的接口（比如 <cite>xxx_get_var</cite> , 这样来拿到需要的指针），内部实现定义的时候是一个NULL, 运行的时候发现为NULL就new一个, 想规避多线程问题可以在载入程序的时候运行, 用一个static class变量的构造和析构专门来分配和释放这个变量或者用gcc的扩展 <cite>__attribute ((constructor))</cite> 和 <cite>__attribute ((destructor)))</cite> 来实现。</li>
 <li>如果全局变量间有依赖关系又会涉及到初始化顺序，但在C++中，不同的.cpp中的初始化顺序由链接的时候的顺序来决定，我们很难控制。通过单例的方式可以减少问题。</li>
@@ -306,17 +305,16 @@ Version: 1.0.0.0
 </dd>
 </dl>
 </li>
-<li><p class="first">so与主程序之间可以提供一些接口来判断兼容性</p>
-</li>
+<li>so与主程序之间可以提供一些接口来判断兼容性</li>
 </ul>
 <ol class="arabic simple" start="4">
 <li><strong>部署</strong></li>
 </ol>
 <p>这里对动态库上线更新提出建议：</p>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>确认cp, sync等覆盖方式是否支持更新正在运行的动态库</dt>
-<dd><ol class="first last arabic simple">
+<dd><ol class="first last arabic">
 <li>需要确认使用中的内核版本是否支持对于已经被载入的动态库进行热切换操作</li>
 <li>所有的切换操作要么保证程序已经停止运行，要么确定已经被dlclose</li>
 </ol>
@@ -325,7 +323,7 @@ Version: 1.0.0.0
 </li>
 <li><dl class="first docutils">
 <dt>采用软链接的方式更新和使用动态链接库</dt>
-<dd><ol class="first last arabic simple">
+<dd><ol class="first last arabic">
 <li>前面提到过，实际生成的动态库名字是带版本号的， 但实际使用的时候可能是采用不带版本号名字(带了版本号就不能随便升级了）, 我们采用 <cite>ln -fs xxx.so.1.1.0.0 xxx.so</cite> 的方式(参数f是强制指向，可以用来修改旧的软连接)来解决这个问题。</li>
 <li>软连接的方式修改使用的库这个过程可以在动态库正在被使用的过程中进行，不需要保证程序停止或者 dlclose。这个过程是安全，但这里软连接的修改不意味着程序使用的动态库版本已经发送变化，其实程序使用的动态库版本还是老版本。</li>
 <li>需要重启程序或者主动 <cite>dlopen</cite> 重新打开才算更新成功。</li>
@@ -335,14 +333,13 @@ Version: 1.0.0.0
 </li>
 <li><dl class="first docutils">
 <dt>动态库更新后需要确认更新的是否是我们需要的库版本</dt>
-<dd><ol class="first last arabic simple">
+<dd><ol class="first last arabic">
 <li>这个过程可以通过 <cite>/usr/sbin/lsof -p $pid</cite> 来确认否载入了我们使用版本的库。</li>
 </ol>
 </dd>
 </dl>
 </li>
-<li><p class="first"><cite>LD_LIBRARY_PATH</cite> 需要加在启动脚本中, 设置在环境中可能会造成其他动态库使用的问题, 不建议使用</p>
-</li>
+<li><cite>LD_LIBRARY_PATH</cite> 需要加在启动脚本中, 设置在环境中可能会造成其他动态库使用的问题, 不建议使用</li>
 </ul>
 <ol class="arabic simple" start="5">
 <li><strong>其他</strong></li>
@@ -389,7 +386,6 @@ Version: 1.0.0.0
                 <li class="list-group-item"><a href="http://www.baidu.com/"><i class="fa fa-百度-square fa-lg"></i> 百度</a></li>
                 <li class="list-group-item"><a href="http://google.com.hk/"><i class="fa fa-google-square fa-lg"></i> Google</a></li>
                 <li class="list-group-item"><a href="https://github.com/"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
-                <li class="list-group-item"><a href="http://blackfox1983.github.io/wheels/"><i class="fa fa-wheels基础库-square fa-lg"></i> Wheels基础库</a></li>
               </ul>
             </li>
 
@@ -425,6 +421,11 @@ Version: 1.0.0.0
                     <li class="list-group-item tag-3">
                         <a href="http://blackfox1983.github.io/tag/o1diao-du-qi.html">
                             O(1)调度器
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/ubuntu.html">
+                            Ubuntu
                         </a>
                     </li>
                     <li class="list-group-item tag-3">

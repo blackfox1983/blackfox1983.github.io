@@ -131,7 +131,7 @@ BlackFox' Home            </a>
 <p>下面用一个小例子说明这个定义的意思：</p>
 <p>假设有两个线程（线程1和线程2）分别运行在两个CPU上，有两个初始值为0的全局共享变量x和y，两个线程分别执行下面两条指令：</p>
 <p>其中初始条件： x = y = 0;</p>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <caption>多线程指令</caption>
 <colgroup>
 <col width="50%" />
@@ -152,7 +152,7 @@ BlackFox' Home            </a>
 </tbody>
 </table>
 <p>因为多线程程序是交错执行的，所以程序可能有如下几种执行顺序：</p>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <caption>多线程执行结果</caption>
 <colgroup>
 <col width="33%" />
@@ -206,10 +206,10 @@ BlackFox' Home            </a>
 <p><strong>几种顺序约束</strong></p>
 <p>顺序的内存一致性模型为我们提供了一种简单的并且直观的程序模型。但是，这种模型实际上阻止了硬件或者编译器对程序代码进行的大部分优化操作。为此，人们提出了很多松弛的（relaxed）内存顺序模型，给予处理器一定的权利来对内存的操作进行适当的调整，如Alpha处理器、PowerPC处理器以及我们现在使用的x86或x64系列的处理器等等。</p>
 <p>下面是一些内存顺序模型：</p>
-<ol class="upperalpha">
+<ol class="upperalpha simple">
 <li><dl class="first docutils">
 <dt>TSO （Total Store Order，整体存储定序，default）</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>数据载入间的执行顺序不可改变</li>
 <li>数据存储间的顺序不可改变</li>
 <li>数据存储同相关的它之前的数据载入间的顺序不可改变</li>
@@ -223,7 +223,7 @@ BlackFox' Home            </a>
 </li>
 <li><dl class="first docutils">
 <dt>PSO （Partial Store Order，部分存储定序）</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>数据载入间的执行顺序不可改变</li>
 <li>数据存储间的执行顺序可以改变</li>
 <li>数据载入同数据存储间相对顺序可以改变</li>
@@ -236,7 +236,7 @@ BlackFox' Home            </a>
 </li>
 <li><dl class="first docutils">
 <dt>RMO （Relaxed Memory Order，宽松内存定序）</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>数据载入间的顺序可以改变</li>
 <li>数据载入同数据存储间的顺序可以改变</li>
 <li>数据存储间的顺序可以改变</li>
@@ -274,7 +274,7 @@ BlackFox' Home            </a>
  7
  8
  9
-10</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// foo.c</span>
+10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">// foo.c</span>
 
 <span class="c1">// 考虑到汇编代码的可读性，变量命名采用大写方式命名</span>
 <span class="kt">int</span> <span class="n">A</span><span class="p">;</span>
@@ -303,23 +303,23 @@ BlackFox' Home            </a>
 16
 17
 18
-19</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># 普通模式编译</span>
-<span class="nv">$ </span>gcc -S -masm<span class="o">=</span>intel foo.c
-<span class="nv">$ </span>cat foo.s
+19</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1"># 普通模式编译</span>
+$ gcc -S -masm<span class="o">=</span>intel foo.c
+$ cat foo.s
 ...
 mov    eax, DWORD PTR B<span class="o">[</span>rip<span class="o">]</span>
-add    eax, 1
+add    eax, <span class="m">1</span>
 mov    DWORD PTR A<span class="o">[</span>rip<span class="o">]</span>, eax
-mov    DWORD PTR B<span class="o">[</span>rip<span class="o">]</span>, <span class="m">0</span> <span class="c"># 注意这里，接下来这里会发生乱序</span>
+mov    DWORD PTR B<span class="o">[</span>rip<span class="o">]</span>, <span class="m">0</span> <span class="c1"># 注意这里，接下来这里会发生乱序</span>
 ...
 
-<span class="c"># 加上 -O2 优化编译选项，可以看到，B的赋值操作顺序变了</span>
-<span class="nv">$ </span>gcc -O2 -S -masm<span class="o">=</span>intel foo.c
-<span class="nv">$ </span>cat foo.s
+<span class="c1"># 加上 -O2 优化编译选项，可以看到，B的赋值操作顺序变了</span>
+$ gcc -O2 -S -masm<span class="o">=</span>intel foo.c
+$ cat foo.s
 ...
 mov     eax, DWORD PTR B<span class="o">[</span>rip<span class="o">]</span>
-mov     DWORD PTR B<span class="o">[</span>rip<span class="o">]</span>, <span class="m">0</span> <span class="c"># 注意这里，这两条指令发生了改变，先执行了 B = 0</span>
-add     eax, 1
+mov     DWORD PTR B<span class="o">[</span>rip<span class="o">]</span>, <span class="m">0</span> <span class="c1"># 注意这里，这两条指令发生了改变，先执行了 B = 0</span>
+add     eax, <span class="m">1</span>
 mov     DWORD PTR A<span class="o">[</span>rip<span class="o">]</span>, eax
 ...
 </pre></div>
@@ -341,7 +341,7 @@ mov     DWORD PTR A<span class="o">[</span>rip<span class="o">]</span>, eax
 13
 14
 15
-16</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">volatile</span> <span class="kt">int</span> <span class="n">ready</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+16</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">volatile</span> <span class="kt">int</span> <span class="n">ready</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
 <span class="kt">void</span> <span class="nf">produce</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">message</span> <span class="o">=</span> <span class="k">new</span> <span class="n">message</span><span class="p">;</span>
@@ -369,7 +369,7 @@ mov     DWORD PTR A<span class="o">[</span>rip<span class="o">]</span>, eax
  8
  9
 10
-11</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// foo.c</span>
+11</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">// foo.c</span>
 
 <span class="c1">// 考虑到汇编代码的可读性，变量命名采用大写方式命名</span>
 <span class="kt">int</span> <span class="n">A</span><span class="p">;</span>
@@ -389,7 +389,7 @@ mov     DWORD PTR A<span class="o">[</span>rip<span class="o">]</span>, eax
 6
 7
 8
-9</pre></div></td><td class="code"><div class="highlight"><pre># 依然采用 o2 优化编译选项，发现这次B的赋值操作顺序没有变化
+9</pre></div></td><td class="code"><div class="highlight"><pre><span></span># 依然采用 o2 优化编译选项，发现这次B的赋值操作顺序没有变化
  $ gcc -O2 -S -masm=intel foo.c
  $ cat foo.s
  ...
@@ -427,7 +427,7 @@ mov     DWORD PTR A<span class="o">[</span>rip<span class="o">]</span>, eax
 25
 26
 27
-28</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// 注：X86 的内存屏障 #define barrier() __asm__ __volatile__(&quot;&quot; : : : &quot;memory&quot;)</span>
+28</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">// 注：X86 的内存屏障 #define barrier() __asm__ __volatile__(&quot;&quot; : : : &quot;memory&quot;)</span>
 
 <span class="k">volatile</span> <span class="kt">int</span> <span class="n">ready</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
 
@@ -482,7 +482,6 @@ mov     DWORD PTR A<span class="o">[</span>rip<span class="o">]</span>, eax
                 <li class="list-group-item"><a href="http://www.baidu.com/"><i class="fa fa-百度-square fa-lg"></i> 百度</a></li>
                 <li class="list-group-item"><a href="http://google.com.hk/"><i class="fa fa-google-square fa-lg"></i> Google</a></li>
                 <li class="list-group-item"><a href="https://github.com/"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
-                <li class="list-group-item"><a href="http://blackfox1983.github.io/wheels/"><i class="fa fa-wheels基础库-square fa-lg"></i> Wheels基础库</a></li>
               </ul>
             </li>
 
@@ -518,6 +517,11 @@ mov     DWORD PTR A<span class="o">[</span>rip<span class="o">]</span>, eax
                     <li class="list-group-item tag-3">
                         <a href="http://blackfox1983.github.io/tag/o1diao-du-qi.html">
                             O(1)调度器
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/ubuntu.html">
+                            Ubuntu
                         </a>
                     </li>
                     <li class="list-group-item tag-3">

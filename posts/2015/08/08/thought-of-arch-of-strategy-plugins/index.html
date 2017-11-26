@@ -141,17 +141,15 @@ BlackFox' Home            </a>
 <dd><p class="first">一般分为静态库(libxxx.a)或动态库(libxxx.so)。即业务方根据工程团队预先沟通好的接口进行开发具体的策略，其后工程团队将开发的策略采用链接的方式继承到模块中。</p>
 <p><em>静态库</em></p>
 <p>采用 <cite>静态库</cite> 的方式，如工程团队维护的模块为X，策略开发的静态库为libpolicy.a，其依赖了liba.a（版本为1.0.0.0），libb.a（1.0.2.0）版本。则该方式主要有以下几个问题：</p>
-<ol class="arabic">
+<ol class="arabic simple">
 <li><dl class="first docutils">
 <dt>耦合带来的沟通、维护成本</dt>
-<dd><p class="first last">模块X在链接libpolicy.a的时候，仍需要链接1.0.0.0版本的liba.a以及1.0.2.0版本的libb.a。增加了X模块的编译成本。且每次liba.a升级，均需要X模块重新编译发布，无形中增加对维护X模块的维护成本以及双方的沟通成本。</p>
-</dd>
+<dd>模块X在链接libpolicy.a的时候，仍需要链接1.0.0.0版本的liba.a以及1.0.2.0版本的libb.a。增加了X模块的编译成本。且每次liba.a升级，均需要X模块重新编译发布，无形中增加对维护X模块的维护成本以及双方的沟通成本。</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>多个策略依赖同一库的不同版本</dt>
-<dd><p class="first last">如libpolicy1.a依赖liba.a的1.0.0.0版本，而libpolicy2.a依赖libb.a的1.0.2.0版本。那么X模块如何在链接的时候针对不同的libpolicy.a链接不同的版本？并且这些不同的版本还不希望和X模块的依赖冲突（即libpolicy.a依赖了1.0.0.0版本的liba.a，而X模块依赖了1.0.3.0版本的liba.a）。额，这将会是一个比较头疼甚至无解的问题。</p>
-</dd>
+<dd>如libpolicy1.a依赖liba.a的1.0.0.0版本，而libpolicy2.a依赖libb.a的1.0.2.0版本。那么X模块如何在链接的时候针对不同的libpolicy.a链接不同的版本？并且这些不同的版本还不希望和X模块的依赖冲突（即libpolicy.a依赖了1.0.0.0版本的liba.a，而X模块依赖了1.0.3.0版本的liba.a）。额，这将会是一个比较头疼甚至无解的问题。</dd>
 </dl>
 </li>
 </ol>
@@ -160,17 +158,15 @@ BlackFox' Home            </a>
 <p>鉴于静态库的问题，因此不少的团队采用了 <cite>动态库</cite> 的方式。即策略开发libpolicy.so，工程团队使用动态库操作接口（dlopen...）进行加载调用。
 动态库在使用的时候有一个需要注意的地方，dlopen的参数不同，效果不同。
 不过考虑到具体的业务需求以及在静态库中无解的问题：</p>
-<ol class="arabic">
+<ol class="arabic simple">
 <li><dl class="first docutils">
 <dt>不同策略可依赖不同版本的库</dt>
-<dd><p class="first last">如libpolicy1.so依赖1.0.0.0版本的liba.a，而不影响libpolicy2.so使用1.0.2.0版本的liba.a</p>
-</dd>
+<dd>如libpolicy1.so依赖1.0.0.0版本的liba.a，而不影响libpolicy2.so使用1.0.2.0版本的liba.a</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>不同策略依赖的库同X模块不冲突</dt>
-<dd><p class="first last">如libpolicy1.so依赖1.0.0.0版本的liba.a，而不影响x模块使用1.0.2.0版本的liba.a</p>
-</dd>
+<dd>如libpolicy1.so依赖1.0.0.0版本的liba.a，而不影响x模块使用1.0.2.0版本的liba.a</dd>
 </dl>
 </li>
 </ol>
@@ -181,16 +177,13 @@ BlackFox' Home            </a>
 即在编译libpolicy.so的同时，也编译发布一个同等版本的libpolicy.a，其后在sample（使用libpolicy进行编译开发的可运行模块）中先使用libpolicy.a进行编译链接，若编译出来的文件可运行，则对应的 <cite>-L</cite> 以及 <cite>-l</cite> 参数为对应so在链接时需要使用的参数。方法虽然很ugly，但是还是很有效的。</p>
 <p>到这里，千万不要以为so的问题没了，还有……若liba.a中有一个全局对象（如extern声明的对象，该对象在析构时会做资源释放， 如 <cite>free</cite> ）。且libpolicy.so和主模块中均依赖了liba.a，那么在模块退出时，就会出core，提示 <cite>double free...</cite> 。解决办法，链接时增加 <cite>-Bsymbolic</cite> 参数，即 <cite>g++ -shared -Wl,-Bsymbolic</cite> 。</p>
 <p>最后，几个lib插件的点：</p>
-<ul>
-<li><p class="first">编译so时候，需要依赖的所有libx.a均使用-fPIC编译发布。</p>
-</li>
-<li><p class="first">X模块提供给策略的接口往往是一个基类的虚函数，具体策略继承该接口重写逻辑。实际调用时，X模块通过lib插件获得这个基类的一个对象，进行多线程环境下的调用，因此需要策略所写的逻辑需要保证线程安全。这个对于天天做数据策略分析的同学来说，增加了不必要的负担。</p>
-</li>
-<li><p class="first">插件热插拔。动态库可以支持热插拔，但是鉴于其复杂度，一般不建议使用。</p>
-</li>
+<ul class="simple">
+<li>编译so时候，需要依赖的所有libx.a均使用-fPIC编译发布。</li>
+<li>X模块提供给策略的接口往往是一个基类的虚函数，具体策略继承该接口重写逻辑。实际调用时，X模块通过lib插件获得这个基类的一个对象，进行多线程环境下的调用，因此需要策略所写的逻辑需要保证线程安全。这个对于天天做数据策略分析的同学来说，增加了不必要的负担。</li>
+<li>插件热插拔。动态库可以支持热插拔，但是鉴于其复杂度，一般不建议使用。</li>
 <li><dl class="first docutils">
 <dt>相比动态库，静态库的优点：</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>确定性，危险仅仅来自于编译阶段，而采用动态库，则会引入部署不一致的问题</li>
 <li>方便性，省去了上线后校验动态库的步骤。包括部署多个进程时需要关注的动态库路径问题</li>
 </ul>
@@ -258,7 +251,6 @@ BlackFox' Home            </a>
                 <li class="list-group-item"><a href="http://www.baidu.com/"><i class="fa fa-百度-square fa-lg"></i> 百度</a></li>
                 <li class="list-group-item"><a href="http://google.com.hk/"><i class="fa fa-google-square fa-lg"></i> Google</a></li>
                 <li class="list-group-item"><a href="https://github.com/"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
-                <li class="list-group-item"><a href="http://blackfox1983.github.io/wheels/"><i class="fa fa-wheels基础库-square fa-lg"></i> Wheels基础库</a></li>
               </ul>
             </li>
 
@@ -294,6 +286,11 @@ BlackFox' Home            </a>
                     <li class="list-group-item tag-3">
                         <a href="http://blackfox1983.github.io/tag/o1diao-du-qi.html">
                             O(1)调度器
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/ubuntu.html">
+                            Ubuntu
                         </a>
                     </li>
                     <li class="list-group-item tag-3">

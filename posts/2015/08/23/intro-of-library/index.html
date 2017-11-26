@@ -146,7 +146,7 @@ BlackFox' Home            </a>
 3
 4
 5
-6</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#include &lt;stdio.h&gt;</span>
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">printf</span><span class="p">(</span><span class="s">&quot;hello world</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
@@ -154,14 +154,13 @@ BlackFox' Home            </a>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table><p>上面这一段程序任何一个学过C语言的同学都是闭着眼睛都可以写出来，但是对于将这样一个源代码编译成为一个可执行文件的过程却不一定有所了解。上面的程序如果要编译，很简单：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>gcc hello.c
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>gcc hello.c
 </pre></div>
 </td></tr></table><p>然后 <cite>./a.out</cite> 就可以运行，但是在这个简单的命令后面隐藏了许多复杂的过程。一般来说，可以把这样的过程分成4个：预编译、编译、汇编和链接。</p>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>预编译</dt>
-<dd><p class="first">这个过程包括了下面的步骤：</p>
-<ol class="last arabic simple">
+<dd>这个过程包括了下面的步骤：<ol class="last arabic">
 <li>宏定义展开，所有的#define 在这个阶段都会被展开</li>
 <li>预编译命令的处理，包括#if #ifdef 一类的命令</li>
 <li>展开#include 的文件，像上面hello world 中的stdio.h ， 把stdio.h中的所有代码合并到hello.c中</li>
@@ -172,7 +171,7 @@ BlackFox' Home            </a>
 </li>
 </ul>
 <p>gcc的预编译 采用的是预编译器cpp, 我们可以通过-E参数来看预编译的结果，如：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>gcc -E hello.c -o hello.i
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>gcc -E hello.c -o hello.i
 </pre></div>
 </td></tr></table><p>生成的 <cite>hello.i</cite> 就是经过了预编译的结果。在预编译的过程中不会太多的检查与预编译无关的语法( <cite>#ifdef</cite> 之类的还是需要检查，<cite>#include</cite> 文件路径需要检查)，但是对于一些诸如 <cite>;</cite> 漏掉的语法错误，在这个阶段都是看不出来的。写过makefile的人都知道，我们需要加上 <cite>-Ipath</cite> 一系列的参数来标示gcc对头文件的查找路径。</p>
 <p>小提示：</p>
@@ -181,58 +180,54 @@ BlackFox' Home            </a>
 <li>如果在头文件中，<cite>#include</cite> 的时候带上路径在这个阶段有时候是可以省不少事情，比如 <cite>#include</cite> ，这样在gcc的-I参数只需要指定一个路径，不会由于不小心导致文件名正好相同出现冲突的麻烦事情。</li>
 <li>不过个人认为所有的 <cite>#include</cite> 都应该是尽量采用从svn根路径下开始写完整路径名的方式进行预编译的过程，当然带路径的方式要多写一些代码,也是麻烦的事情。路径由外部指定相对也会灵活一些。所以在实际编写中，建议库的发布尽量包含库路径（如：include/libxxx。则include的时候则写为 <cite>libxxx/xxx.h</cite>)作为一种减少冲突的方法。</li>
 </ol>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>编译</dt>
-<dd><p class="first last">这个过程才是进行语法分析和词法分析的地方，他们将我们的C/C++代码翻译成为汇编代码，这也是一个编译器最复杂的地方。使用命令</p>
-</dd>
+<dd>这个过程才是进行语法分析和词法分析的地方，他们将我们的C/C++代码翻译成为汇编代码，这也是一个编译器最复杂的地方。使用命令</dd>
 </dl>
 </li>
 </ul>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>gcc -S hello.i -o hello.s
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>gcc -S hello.i -o hello.s
 </pre></div>
 </td></tr></table><p>可以看到gcc编译出来的汇编代码，现代gcc编译器一般是把预编译和编译合在一起，使用 <cite>cc1</cite> 程序来完成这个过程。所以有时候在编译大文件的时候可以用top命令看一个cc1的进程一直在占用时间，这个时候就是程序在执行编译过程。后面提到的编译过程都是指 <cite>cc1</cite> 的处理包括了预编译与编译。</p>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>汇编</dt>
-<dd><p class="first last">现在C/C++代码已经成为汇编代码了，直接使用汇编代码的编译器把汇编变成机器码（注意还不是可执行的)。</p>
-</dd>
+<dd>现在C/C++代码已经成为汇编代码了，直接使用汇编代码的编译器把汇编变成机器码（注意还不是可执行的)。</dd>
 </dl>
 </li>
 </ul>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>gcc -c hello.c -o hello.o
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>gcc -c hello.c -o hello.o
 </pre></div>
 </td></tr></table><p>这里的 <cite>hello.o</cite> 就是最后的机器码，如果作为一个 <cite>静态库</cite> 到这里可以所已经完成了，不需要后面的过程。对于静态库的.a文件其实是多个.o 通过ar命令打包起来的，仅仅是为了方便使用，抛开.a直接使用.o也是一样的。</p>
 <p>小提示:</p>
 <ol class="arabic simple">
 <li>gcc采用 <cite>as</cite> 进行汇编的处理过程，as由于接收的是gcc生成的标准汇编, 在语法检查上存在不少缺陷，如果是我们自己写的汇编代码给as去处理，经常会出现很多莫名奇妙的错误。</li>
 </ol>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>链接</dt>
-<dd><p class="first last">链接的过程，本质上来说是一个把所有的机器码文件组合成一个可执行的文件。上面汇编的结果得到一个.o文件，但是这个.o要生成二执行文件只靠它自己是不行的，它还需要一堆辅助的机器码，帮它处理与系统底层打交道的事情。</p>
-</dd>
+<dd>链接的过程，本质上来说是一个把所有的机器码文件组合成一个可执行的文件。上面汇编的结果得到一个.o文件，但是这个.o要生成二执行文件只靠它自己是不行的，它还需要一堆辅助的机器码，帮它处理与系统底层打交道的事情。</dd>
 </dl>
 </li>
 </ul>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>gcc -o hello hello.o
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>gcc -o hello hello.o
 </pre></div>
 </td></tr></table><p>这样就把一个.o文件链接成为了一个二进制可执行文件。我们提供的各种库头文件在编译期使用。到了链接期就需要用 <cite>-l, -L</cite> 的方式来指定我们到底需要哪些库。对于glibc中的strlen之类常用的东西编译器会帮助你去加上，不需要手动指定。这个地方也是本文讨论的重点, 在后面会有更详细的说明。</p>
 <p>小提示:</p>
 <ol class="arabic simple">
 <li>某些程序在编译的时候会出现 <cite>linker input file unused because linking not done</cite> 的提示（虽然gcc不认为是错误，这个提示还是会出现的），这里就是把编译和链接使用的参数搞混了，比如：</li>
 </ol>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>g++ -c hello.cpp -I../../xxxx/include -L../../xxxx/lib/ -lxxxx
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>g++ -c hello.cpp -I../../xxxx/include -L../../xxxx/lib/ -lxxxx
 </pre></div>
 </td></tr></table><p>这样的写法就会导致上面的提示，因为在编译的过程中是不需要链接的，它们两个过程其实是独立的。</p>
 <ol class="arabic simple" start="2">
 <li><strong>静态链接</strong></li>
 </ol>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>链接的过程</dt>
-<dd><p class="first last">这里先介绍一下，其实链接做的工作分两块: 符号解析和重定位：</p>
-</dd>
+<dd>这里先介绍一下，其实链接做的工作分两块: 符号解析和重定位：</dd>
 </dl>
 </li>
 </ul>
@@ -273,7 +268,7 @@ BlackFox' Home            </a>
 31
 32
 33
-34</pre></div></td><td class="code"><div class="highlight"><pre><span class="m">0000000000601034</span> B __bss_start
+34</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="m">0000000000601034</span> B __bss_start
 <span class="m">0000000000601034</span> b completed.6333
 <span class="m">0000000000601030</span> D __data_start
 <span class="m">0000000000601030</span> W data_start
@@ -316,7 +311,7 @@ BlackFox' Home            </a>
 5
 6
 7
-8</pre></div></td><td class="code"><div class="highlight"><pre><span class="cm">/*hello.cpp*/</span>
+8</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="cm">/*hello.cpp*/</span>
 
 <span class="kt">int</span> <span class="nf">foo</span><span class="p">();</span>
 
@@ -327,15 +322,15 @@ BlackFox' Home            </a>
 </pre></div>
 </td></tr></table><p>采用下面的方式进行编译：</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="highlight"><pre>g++ -c hello.cpp
+2</pre></div></td><td class="code"><div class="highlight"><pre><span></span>g++ -c hello.cpp
 g++ -o hello hello.o
 </pre></div>
 </td></tr></table><p>第一步正常结束，并且生成了hello.o文件，到第二步的时候报了如下的错误：</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
-3</pre></div></td><td class="code"><div class="highlight"><pre>hello.o: In <span class="k">function</span> <span class="sb">`</span>main<span class="s1">&#39;:</span>
+3</pre></div></td><td class="code"><div class="highlight"><pre><span></span>hello.o: In <span class="k">function</span> <span class="sb">`</span>main<span class="s1">&#39;:</span>
 <span class="s1">hello.cpp:(.text+0x5): undefined reference to `foo()&#39;</span>
-collect2: error: ld returned <span class="m">1</span> <span class="nb">exit </span>status
+collect2: error: ld returned <span class="m">1</span> <span class="nb">exit</span> status
 </pre></div>
 </td></tr></table><p>由于foo是全局符号，在编译的时候不会报错，等到链接的时候，发现没有找到对应的符号，就会报出上面的错误。但是如果我们把上面的写法改成下面这样：</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
@@ -345,7 +340,7 @@ collect2: error: ld returned <span class="m">1</span> <span class="nb">exit </sp
 5
 6
 7
-8</pre></div></td><td class="code"><div class="highlight"><pre><span class="cm">/*hello.cpp*/</span>
+8</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="cm">/*hello.cpp*/</span>
 
 <span class="k">static</span> <span class="kt">int</span> <span class="nf">foo</span><span class="p">();</span> <span class="c1">//注意这里的static</span>
 
@@ -357,33 +352,33 @@ collect2: error: ld returned <span class="m">1</span> <span class="nb">exit </sp
 </td></tr></table><p>运行 <cite>g++ -c hello.cpp</cite> ，马上就报以下错误：</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
-3</pre></div></td><td class="code"><div class="highlight"><pre>hello.cpp:1:12: warning: ‘int foo<span class="o">()</span>’ used but never defined <span class="o">[</span>enabled by default<span class="o">]</span>
+3</pre></div></td><td class="code"><div class="highlight"><pre><span></span>hello.cpp:1:12: warning: ‘int foo<span class="o">()</span>’ used but never defined <span class="o">[</span>enabled by default<span class="o">]</span>
 static int foo<span class="o">()</span><span class="p">;</span>
            ^
 </pre></div>
 </td></tr></table><p>在编译器就发现foo无法生成目标文件的符号表，马上报错，对于一些本地使用的函数使用static一方面可以避免符号污染，另一方面也可以让编译器尽快的发现错误。
 一般基础库提供的都是一系列的.a文件，这些.a文件其实是一批的目标文件(.o)的打包结果。这样的目的是可以方便的使用已有代码生成的结果，一般情况下是一个 <cite>.c/.cpp</cite> 文件生成一个.o文件。如果不提供.a，那么在编译的时候如果带上一堆的.o文件显的很不方便，如：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>g++ -o hello hello.cpp a.o b.o c.o
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>g++ -o hello hello.cpp a.o b.o c.o
 </pre></div>
 </td></tr></table><p>这样大量的使用.o也很容易出错，在linux下使用 <cite>archive</cite> 来讲这些.o存档和打包。所以我们就可以把编译参数写成：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>g++ -o hello hello.cpp ./libxxx.a
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>g++ -o hello hello.cpp ./libxxx.a
 </pre></div>
 </td></tr></table><p>我们可以使用 <cite>./libxxx.a</cite> 直接使用 <cite>libxxx.a</cite> 这个库，不过gcc提供了另外的方式来使用：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>g++ -o hello hello.cpp -L./ -lxxx
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>g++ -o hello hello.cpp -L./ -lxxx
 </pre></div>
 </td></tr></table><p>-L指定需要查找的库文件的路径，-l选择需要使用的库名字，不过库的名字需要用 <cite>lib+name</cite> 的方式命名，才会被gcc认出来。不过上面的这种方式存在一个问题就是不区分动态库和静态库，这个问题在后面介绍动态库的时候还会提到。
 当存在多个.a并且在库之间也存在依赖关系，这个时候情况就比较复杂。如果我们要使用liba.a，liba,a又依赖libb.a， 这个时候需要写成类似下面的形式：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>g++ -o hello hello.cpp -Lpath/of/liba -Lpath/of/libb -la -lb
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>g++ -o hello hello.cpp -Lpath/of/liba -Lpath/of/libb -la -lb
 </pre></div>
 </td></tr></table><p>-lb需要写在-la的后面，这是由于在默认情况对于符号表的解析和查找工作是由后往前（内部实现是一个类似堆栈的尾递归），所以当所使用的库本身存在依赖关系的时候，越是基础的库就越是需要放到后面。否则如果上面把 <cite>-la -lb</cite> 的位置换一下，可能就会出现 <cite>undefined reference to　xxx</cite> 的错误。当然gcc提供了另外的方式的来解决这个问题：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>g++ -o hello hello.cpp -Lpath/of/liba -Lpath/of/libb -Xlinker <span class="s2">&quot;-(&quot;</span> -la -lb -Xlinker <span class="s2">&quot;-)&quot;</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>g++ -o hello hello.cpp -Lpath/of/liba -Lpath/of/libb -Xlinker <span class="s2">&quot;-(&quot;</span> -la -lb -Xlinker <span class="s2">&quot;-)&quot;</span>
 </pre></div>
 </td></tr></table><p>可以看到我们需要的库被 <cite>-Xlinker &quot;-(&quot;</cite> 和 <cite>-Xlinker &quot;-)&quot;</cite> 　包含起来，gcc在这里处理的时候会循环自动查找依赖关系，不过这样的代价就是延长gcc的编译时间，如果使用的库非常的多时候，对编译的耗时影响还是非常大。
 -Xlinker有时候也简写成 <cite>-Wl, `，它的意思是它后面的参数是给链接器使用的。</cite>-Xlinker` 和 <cite>-Wl</cite> 的区别是一个后面跟的参数是用空格，另一个是用 <cite>,</cite> 。</p>
 <p>我们通过nm命令查看目标文件，可以看到类似下面的结果：</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span class="c">#nm hello.o</span>
+3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">#nm hello.o</span>
 <span class="m">0000000000000000</span> T main
                  U _Z3foov
 </pre></div>
@@ -398,23 +393,22 @@ static int foo<span class="o">()</span><span class="p">;</span>
 <li>重定位</li>
 </ol>
 <p>经过上面的符号解析后，所有的符号都可以找到它所对应的实际位置（U表示的符号找到具体的实际位置）。as汇编生成一个目标模块的时候，它不知道数据和代码在最后具体的位置，同时也不知道任何外部定义的符号的具体位置，所以as在生成目标代码的时候，对于位置未知的符号，它会生成一个重定位表目，告诉链接器在将目标文件合并成可执行文件时候如何修改地址成最终的位置。</p>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>g++和gcc</dt>
-<dd><p class="first last">采用gcc和g++在编译的时候产生的符号有所不同。</p>
-</dd>
+<dd>采用gcc和g++在编译的时候产生的符号有所不同。</dd>
 </dl>
 </li>
 </ul>
 <p>在C++中由于要支持函数重载，命名空间等特性，g++会把函数＋参数（可能还有命名空间），把函数命变成一个特殊并且唯一的符号名。例如：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">);</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kt">int</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">);</span>
 </pre></div>
 </td></tr></table><p>在gcc编译后，在符号表中的名字就是函数名foo, 但是在g++编译后名字可能就变成了 <cite>_Z3fooi</cite> ，我们可以使用 <cite>c++filt</cite> 命令把一个符号还原成它原本的样子，比如：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>c++filt _Z3fooi
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>c++filt _Z3fooi
 </pre></div>
 </td></tr></table><p>运行的结果可以得到 <cite>foo(int)</cite> 。</p>
 <p>由于在C++和纯C环境中，符号表存在不兼容问题，Ｃ程序不能直接调用C++编译出来的库，C++程序也不能直接调用C编译出来的库。为了解决这个问题C++中引入了　<cite>extern &quot;C&quot;</cite>　的方式：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="kt">int</span> <span class="n">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">);</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="kt">int</span> <span class="n">foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">);</span>
 </pre></div>
 </td></tr></table><p>这样在用g++编译的时候，c++的编译器会自动把上面的 <cite>int foo(int a)</cite> 当做C的接口进行符号转化。这样在纯C里面就可以认出这些符号。不过这里存在一个问题，<cite>extern &quot;C&quot;</cite> 是C++支持的，gcc并不认识，所有在实际中一般采用下面的方式使用：</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
@@ -425,7 +419,7 @@ static int foo<span class="o">()</span><span class="p">;</span>
 6
 7
 8
-9</pre></div></td><td class="code"><div class="highlight"><pre><span class="cp">#ifdef __cplusplus</span>
+9</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="cp">#ifdef __cplusplus</span>
 <span class="k">extern</span> <span class="s">&quot;C&quot;</span> <span class="p">{</span>
 <span class="cp">#endif</span>
 
@@ -442,55 +436,53 @@ static int foo<span class="o">()</span><span class="p">;</span>
 <li>在linux gcc 中，只有在源代码使用.c做后缀，并且使用gcc编译才会被编译成纯C的结果，其他情况像g++编译.c文件，或者gcc编译.cc、.cpp文件都会被当作C++程序编译成C++的目标文件，gcc和g++唯一的不同在于gcc不会主动链接 <cite>-lstdc++</cite> 。</li>
 <li>在 <cite>extern &quot;C&quot; { }</cite> 中如果存在默认参数的接口，在g++编译的时候不会出现问题，但是gcc使用的时候会报错。因为对于函数重载，接口的符号表还是和不用默认参数的时候是一样的。</li>
 </ol>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>编译器版本问题</dt>
-<dd><p class="first last">采用gcc和g++在编译的时候产生的符号有所不同。有些时候会发现如果64位机器上的32位程序运行出core, 把core文件放到开发机上进行调试会看到出现在glibc的动态库的函数和core在一些很奇怪的位置，根本不是我们程序中调用的位置，这里很重要的原因就在于动态库的版本不一样。</p>
-</dd>
+<dd>采用gcc和g++在编译的时候产生的符号有所不同。有些时候会发现如果64位机器上的32位程序运行出core, 把core文件放到开发机上进行调试会看到出现在glibc的动态库的函数和core在一些很奇怪的位置，根本不是我们程序中调用的位置，这里很重要的原因就在于动态库的版本不一样。</dd>
 </dl>
 </li>
 </ul>
 <p>小提示：
 1. 基础库和二进制程序采用的gcc/g++保持一致，且版本保持一致。包括32/64位。</p>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>符号表冲突</dt>
-<dd><p class="first last">我们在编译程序的时候时常会遇到类似于下述的错误：</p>
-</dd>
+<dd>我们在编译程序的时候时常会遇到类似于下述的错误：</dd>
 </dl>
 </li>
 </ul>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>multiple definition of <span class="s1">&#39;foo()&#39;</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>multiple definition of <span class="s1">&#39;foo()&#39;</span>
 </pre></div>
 </td></tr></table><p>这些错误的产生都是由于所使用的.o文件中存在了相同的符号造成的。如：</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
 4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">//libx.cpp</span>
+5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">//libx.cpp</span>
 <span class="kt">int</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">30</span><span class="p">;</span> <span class="p">}</span>
 
 <span class="c1">//liby.cpp</span>
 <span class="kt">int</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">20</span><span class="p">;</span> <span class="p">}</span>
 </pre></div>
 </td></tr></table><p>将 <cite>libx.cpp、liby.cpp</cite> 编译成 <cite>libx.o、liby.o</cite> 两个文件：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>g++ -o main main.cpp libx.o liby.o
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>g++ -o main main.cpp libx.o liby.o
 </pre></div>
 </td></tr></table><p>这个时候就会报出 <cite>multiple definition of `foo()'</cite> 的错误。但是如果把libx.o和liby.o分别打包成libx.a和liby.a用下面的方式编译：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>g++ -o main main.cpp -L./ -lx -ly
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>g++ -o main main.cpp -L./ -lx -ly
 </pre></div>
 </td></tr></table><p>这个时候编译不会报错，它会选择第一个出现的库，上面的例子中会选择libx中的foo。但是注意不是所有的情况都是这样的，由于链接是以.o为单位的，完全可以不用某个.o的时候才不会出错误，否则依然会出现 <cite>multiple</cite> 的错误，这种情况下的建议是查看一下这些函数的行为是什么样子，是否是一致的，如果不一致，还是想办法规避。如果是一致的话可以用 <cite>-Wl,--allow-multiple-definition</cite>  强制编译过去，这样会使用第一个碰到的库，但不推荐这样做。</p>
 <p>可以通过　<cite>g++ -o main main.cpp -L./ -lx -ly　-Wl,--trace-symbol=_Z3foov</cite> 的命令查看符号具体是链接到哪个库中，也可以使用 <cite>g++ -o main main.cpp -L./ -lx -ly　-Wl,--cref</cite>　可以把所有的符号链接都输出(无论是否最后被使用)。</p>
 <p>另外，对于一些定义在头文件中的全局常量，gcc和g++有不同的行为，g++中const也同时是static的，但gcc不是。如：</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
-2</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">//foo.h</span>
+2</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">//foo.h</span>
 <span class="k">const</span> <span class="kt">int</span> <span class="n">INTVALUE</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
 </pre></div>
 </td></tr></table><p>有两个库 a和b，他们在生成的时候有使用到了 <cite>INTVALUE</cite> ，如果有一个程序main同时使用到了a库和b库，在链接的时候gcc编译的结果就会报错，但如果a和b都是g++编译的话结果却一切正常。这个原因主要是在g++中会把 <cite>INTVALUE</cite> 这种const常量当做static的，这样就是一个局部变量，不会导致冲突，但是如果是gcc编译的话，这个地方INTVALUE会被认为是一个对外的全局常量且是非static的，这个时候就会造成链接错误。</p>
 <p>小提示：
 1. 上面说了对于a库和b库出现同样符号的情况会有冲突， 但是在实际中有这么一种情况，a库定义的foo的接口，在有b库的情况下是一种行为，在没有b库的情况下又想要一种行为。为解决这个问题引入了弱连接的机制。可以看到在上述nm的输出中，有些符号前面有T标志，这个表示的是这个符号是一个强符号。如果看有W的表示，那么就表示这个符号是弱符号。如果有一个同名的库也有相同的符号并且是强连接，那么会报错（连接器不允许强符号冲突）。如果是弱连接，会存在先后顺序用谁的问题。glibc中的符号都是弱连接，我们可以在我们的程序中编写 <cite>open、 write</cite> 之类的函数去替换掉glibc中的实现。</p>
 <p>如果我们要自己写弱连接的函数可以采用gcc扩展来表示一个符号是弱连接：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">__attribute__</span><span class="p">((</span><span class="n">weak</span><span class="p">))</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">func</span><span class="p">();</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">__attribute__</span><span class="p">((</span><span class="n">weak</span><span class="p">))</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">func</span><span class="p">();</span>
 </pre></div>
 </td></tr></table><ol class="arabic simple" start="3">
 <li><strong>动态链接</strong></li>
@@ -503,19 +495,18 @@ static int foo<span class="o">()</span><span class="p">;</span>
 <li>编译后的程序就是二进制代码，有些代码它们涉及到不同的机器和环境，假设在A机器上编译了一个程序X，把它直接放到B机器上去运行，由于A和B环境存在差异，直接运行X程序可能存在问题，这个时候如果把和机器相关的这部分做成动态库C，并且保证接口一致，编译X程序的时候只调用C的对外接口．对于一般的用户态的X程序而言，就可以简单的从Ａ环境放到Ｂ环境中。但如果是静态编译，就可能做不到这点，需要在Ｂ机器上重新编译一次</li>
 </ol>
 <p>动态链接库在linux被称为共享库（shared library，下文提到的共享库和动态链接库都是指代shared library），它主要是为了解决上面列出静态库的缺点而提出的。</p>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>共享库的使用</dt>
-<dd><p class="first last">共享库的使用主要有两种方式，一种方式和.a的静态库类似由编译器来控制，其实质和二进制程序一样都是由系统中的载入器(ld-linux.so)载入，另一种是写在代码中，由我们自己的代码来控制。</p>
-</dd>
+<dd>共享库的使用主要有两种方式，一种方式和.a的静态库类似由编译器来控制，其实质和二进制程序一样都是由系统中的载入器(ld-linux.so)载入，另一种是写在代码中，由我们自己的代码来控制。</dd>
 </dl>
 </li>
 </ul>
 <p>以上述的例子：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>g++ -shared -fPIC -o libx.so libx.cpp
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>g++ -shared -fPIC -o libx.so libx.cpp
 </pre></div>
 </td></tr></table><p>编译的时候和静态库类似，只是加上了 <cite>-shared -fPIC</cite> ，将输出命名改为.so。然后和可执行文件链接.a一样，都是：</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>g++ -o main main.cpp -L./ -lx
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>g++ -o main main.cpp -L./ -lx
 </pre></div>
 </td></tr></table><p>这样main就是调用 <cite>libx.so</cite> ，在运行的时候可能会出现找不到libx.so的错误，这个原因是由于动态的库查找路径的问题，动态库默认的查找路径是由 <cite>/etc/ld.so.conf</cite> 文件来指定，在运行可执行文件的时候，按照顺会去这些目录下查找需要的共享库。我们可以通过环境变量 <cite>LD_LIBRARY_PATH</cite> 来指定共享库的查找路径（注：LD_LIBRARY_PATH的优先级比ld.so.conf要高)。命令上运行 <cite>ldd ./main</cite> 我们可以看到这个二进制程序在运行的时候需要使用的动态库，例如：</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
@@ -523,7 +514,7 @@ static int foo<span class="o">()</span><span class="p">;</span>
 3
 4
 5
-6</pre></div></td><td class="code"><div class="highlight"><pre>    linux-vdso.so.1 <span class="o">=</span>&gt;  <span class="o">(</span>0x00007fffda6db000<span class="o">)</span>
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span>    linux-vdso.so.1 <span class="o">=</span>&gt;  <span class="o">(</span>0x00007fffda6db000<span class="o">)</span>
     libstdc++.so.6 <span class="o">=</span>&gt; /lib64/libstdc++.so.6 <span class="o">(</span>0x00007f71f2146000<span class="o">)</span>
     libm.so.6 <span class="o">=</span>&gt; /lib64/libm.so.6 <span class="o">(</span>0x00007f71f1e43000<span class="o">)</span>
     libgcc_s.so.1 <span class="o">=</span>&gt; /lib64/libgcc_s.so.1 <span class="o">(</span>0x00007f71f1c2d000<span class="o">)</span>
@@ -535,11 +526,10 @@ static int foo<span class="o">()</span><span class="p">;</span>
 <ol class="arabic simple">
 <li>有一个特殊的环境变量 <cite>LD_PRELOAD</cite> ，可以强行替换共享库中运行的符号。<cite>export LD_PRELOAD= &quot;xxx.so&quot;</cite> ，如果程序运行过程中遇到了和 <cite>xxx.so</cite> 中 同名的符号，这个时候程序会使用到xxx.so中的符号。</li>
 </ol>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>手动载入共享库</dt>
-<dd><p class="first last">除了采用类型于静态库的方式来使用动态库，我们还可以通过由代码来控制动态库的使用。这种方式允许应用程序在运行时加载和链接共享库，主要有下面的四个接口：</p>
-</dd>
+<dd>除了采用类型于静态库的方式来使用动态库，我们还可以通过由代码来控制动态库的使用。这种方式允许应用程序在运行时加载和链接共享库，主要有下面的四个接口：</dd>
 </dl>
 </li>
 </ul>
@@ -553,7 +543,7 @@ static int foo<span class="o">()</span><span class="p">;</span>
  8
  9
 10
-11</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">//载入动态链接库</span>
+11</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">//载入动态链接库</span>
 <span class="kt">void</span> <span class="o">*</span><span class="nf">dlopen</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">filename</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flag</span><span class="p">);</span>
 
 <span class="c1">//获取动态库中的符号</span>
@@ -568,9 +558,9 @@ static int foo<span class="o">()</span><span class="p">;</span>
 </td></tr></table><p>看下面的例子：</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">typedef</span> <span class="kt">int</span> <span class="nf">foo_t</span><span class="p">();</span>
+3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">typedef</span> <span class="kt">int</span> <span class="nf">foo_t</span><span class="p">();</span>
 
-<span class="kt">foo_t</span> <span class="o">*</span> <span class="n">foo</span> <span class="o">=</span> <span class="p">(</span><span class="kt">foo_t</span><span class="o">*</span><span class="p">)</span> <span class="n">dlsym</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">);</span>
+<span class="n">foo_t</span> <span class="o">*</span> <span class="n">foo</span> <span class="o">=</span> <span class="p">(</span><span class="n">foo_t</span><span class="o">*</span><span class="p">)</span> <span class="n">dlsym</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="p">);</span>
 </pre></div>
 </td></tr></table><p>通过上面的方式我们可以载入符号 <cite>foo</cite> 所对应的地址，然后通过强制类型转换给一个函数指针，当然这里函数指针的类型需要和符号的原型类型保持一致，这些一般是由共享库所对应的头文件提供。这里要注意一个问题，在dlsym中载入的符号表示是和我们使用nm库文件所看到符号表要保持一致，这里就有一个前面提到的gcc和g++符号表的不同，一个 <cite>int foo()</cite> ，如果是g++编译，并且没有extern &quot;C&quot;导出接口，那么用dlsym载入的时候需要用　<cite>dlsym(handle, &quot;_Z3foov&quot;)</cite> 方式才可以载入函数 <cite>int foo()</cite> ，所以建议所以的共享库对外接口都采用　<cite>extern &quot;C&quot;</cite> 的方式导出纯C接口对外使用，这样在使用上也会比较方便。</p>
 <p>dlopen 的flag 标志可以选择　<cite>RTLD_GLOBAL/RTLD_LOCAL/RTLD_NOW/RTLD_LAZY</cite> 。 <cite>RTLD_NOWRTLD_LAZY</cite> 只是表示载入的符号是一开始就被载入还等到使用的时候被载入，对于多数应用而言没有什么特别的影响。这两个标志都可以通过 <cite>|</cite> 和 <cite>RTLD_GLOBAL或RTLD_LOCAL</cite> 一起连用。这里主要是说明 <cite>RTLD_GLOBAL</cite> 的功能，考虑这样的一个情况: 我们有一个main.cpp，调用了两个动态库 <cite>liba.so</cite> 和　<cite>libB</cite> ，假设liba中有一个对外接口叫做 <cite>testA</cite> ，在main.cpp可以通过dlsym获取到 <cite>testA</cite> 的指针进行使用。但是对于libb中的接口，它是看到不liba中的接口的，使用testA是不能调用到liba中的testA的，但是如果在dlopen打开liba.so的时候，设置了RTLD_GLOBAL这个选项，就可以把liba.so中的接口升级为全局可见, 这样在libb中就可以直接调用liba中的testA,如果在多个共享库都有相同的符号，并且有RTLD_GLOBAL选项，那么会优先选择第一个。另外这里注意到一个问题，RTLD_GLOBAL使的动态库之间的对外接口是可见的，但是动态库是不能调用主程序中的全局符号，为了解决这个问题， gcc引入了一个参数 <cite>-rdynamic</cite> ，在编译载入共享库的可执行程序的时候最后在链接的时候加上 <cite>-rdynamic</cite> ，会把可执行文件中所有的符号变成全局可见，对于这个可执行程序而言，它载入的动态库在运行中可以直接调用主程序中的全局符号，而且如果共享库（自己或者另外的共享库 使用RTLD_GLOBAL打开) 中有同名的符号，会选择可执行文件中使用的符号，这在一些情况下可能会带来一些莫名其妙的运行错误。</p>
@@ -580,11 +570,10 @@ static int foo<span class="o">()</span><span class="p">;</span>
 <li>共享库无论是通过dlopen方式载入还是载入器载入，实质都是通过mmap的方式把共享库映射到内存空间中去。mmap的参数 <cite>MAP_DENYWRITE</cite> 可以在修改已经被载入某个进程文件的时候阻止对于内存数据的修改，由于现在内核中已经禁用这个参数，直接导致的结果就是如果对mmap的文件进行修改，这个时候的修改会被直接反映到已经被mmap映射的空间上。由于内核的不支持，使得共享库不能在运行期进行热切换，共享库在更新的时候需要由载入的程序通过一些外部的方式来判断，主动使用dlclose，并且dlopen 重新载入共享库，如果是载入器载入那么需要重启程序。另外这里的热切换指的是直接copy覆盖原有的共享库，如果是采用mv或者软连接的方式那么还是安全的，共享库被mv后不会影响原来的已经载入它的程序。</li>
 <li>g++加上 <cite>-rdynamic</cite> 参数实质上相当于ld链接的时候加上 <cite>-E或者--export-dynamic</cite> 参数，效果与 <cite>g++ -Wl,-E</cite> 或者 <cite>g++ -Wl,--export-dynamic</cite> 的效果是一样的。</li>
 </ol>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>静态库和动态库的混合编译</dt>
-<dd><p class="first last">一般库都是以静态库的方式提供，但是也有出于运维和升级的考虑使用了动态链接库，这样不可避免的出现了大量的静态库与动态库的混合使用，经常会出现一些奇怪的错误，使用的时候需要有所关注。对于一般情况下，只要静态库与共享库之间没有依赖关系，没有使用全局变量（包括static变量)，不会出现太多的问题，但是偶尔也会因为库代码设计上的一些疏忽导致出现问题。如：一些基础库中的变量或函数，虽然没有通过.h文件公开，但是还是采用了extern的方式被其他的.c文件使用(这里涉及到一个问题就是一个源码中的变量或接口要被同一个库中其它地方使用，只能被extern，但extern 后就意味着可以被其它任意使用这个库的程序看到和使用, 无论是否在对外接口中声明), 还有个别接口可以使用static但没有使用static。导致升级后（如删除了extern的符号）导致链接错误。因此，在编写动态库的过程中，可以static的函数即使没有暴露在头文件也需要尽量static，避免和外界冲突。那种没有对外公开接口就无所谓加不加static的观点是存在一定风险的。</p>
-</dd>
+<dd>一般库都是以静态库的方式提供，但是也有出于运维和升级的考虑使用了动态链接库，这样不可避免的出现了大量的静态库与动态库的混合使用，经常会出现一些奇怪的错误，使用的时候需要有所关注。对于一般情况下，只要静态库与共享库之间没有依赖关系，没有使用全局变量（包括static变量)，不会出现太多的问题，但是偶尔也会因为库代码设计上的一些疏忽导致出现问题。如：一些基础库中的变量或函数，虽然没有通过.h文件公开，但是还是采用了extern的方式被其他的.c文件使用(这里涉及到一个问题就是一个源码中的变量或接口要被同一个库中其它地方使用，只能被extern，但extern 后就意味着可以被其它任意使用这个库的程序看到和使用, 无论是否在对外接口中声明), 还有个别接口可以使用static但没有使用static。导致升级后（如删除了extern的符号）导致链接错误。因此，在编写动态库的过程中，可以static的函数即使没有暴露在头文件也需要尽量static，避免和外界冲突。那种没有对外公开接口就无所谓加不加static的观点是存在一定风险的。</dd>
 </dl>
 </li>
 </ul>
@@ -592,15 +581,14 @@ static int foo<span class="o">()</span><span class="p">;</span>
 <ol class="arabic simple">
 <li>有些程序使用 <cite>using namespace {}</cite> 这样的匿名命名空间来规避冲突的问题，从编译器角度而言，在代码中使用确实不会产生冲突。不过采用dlopen的方式却还是可以通过强制获取符号的方式运行在共享库中使用 <cite>using namespace {}</cite> 包含起来的函数，但static的函数是不能被dlopen方式强制获取的。</li>
 </ol>
-<ol class="loweralpha">
+<ol class="loweralpha simple">
 <li><dl class="first docutils">
 <dt>地址无关代码</dt>
-<dd><p class="first last">在64位下编译动态库的时候，经常会遇到下面的错误：</p>
-</dd>
+<dd>在64位下编译动态库的时候，经常会遇到下面的错误：</dd>
 </dl>
 </li>
 </ol>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>/usr/bin/ld: /tmp/ccQ1dkqh.o: relocation R_X86_64_32 against <span class="s1">&#39;a local symbol&#39;</span> can not be used when making a shared object<span class="p">;</span> recompile with -fPIC
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>/usr/bin/ld: /tmp/ccQ1dkqh.o: relocation R_X86_64_32 against <span class="s1">&#39;a local symbol&#39;</span> can not be used when making a shared object<span class="p">;</span> recompile with -fPIC
 </pre></div>
 </td></tr></table><p>提示说需要-fPIC编译，然后在链接动态库的地方加上-fPIC的参数编译结果还是报错，需要把共享库所用到的所有静态库都采用 <cite>-fPIC</cite> 编译一边才可以成功的在64位环境下编译出动态库。这里的-fPIC指的是地址无关代码。</p>
 <p>这里首先先说明一下装载时重定位的问题，一个程序如果没有用到任何动态库，那么由于已经知道了所有的代码，那么装载器在把程序载入内存的过程中就可以直接安装静态库在链接的时候定好的代码段位置直接加载进内存中的对应位置就可以了。但是在面对动态的库的时候 ，这种方式就不行了。假设需要载入共享库A，但是在编译链接的时候使用的共享库和最后运行的不一定是同一个库，在编译期就没办法知道具体的库长度，在链接的时候就没办法确定它或者其他动态库的具体位置。另一个方面动态库中也会用到一些全局的符号，这些符号可能是来自其他的动态库，这在编译器是没办法假设的（如果可以假设那就全是静态库了)。基于上面的原因，就要求在载入动态库的时候对于使用到的符号地址实现重定位。在实现上在编译链接的时候不做重定位操作，地址都采用相对地址，一但到了需要载入的时候，根据相对地址的偏移计算出最后的绝对地址载入内存中。但是这种采用装载时重定位的方式存在一个问题就是相同的库代码（不包括数据部分）不能在多个进程间共享（每个代码都放到了它自己的进程空间中）,这个失去了动态库节省内存的优势。为了解决这个问题，ELF中的做法是在数据段中建立一个指向那些需要被使用(内部的位置无关简单采用相对地址访问就可以实现)的地址列表(也被称为全局偏移表，Global offset table, GOT)。可以通过GOT相对应的位置进行间接引用。对于32位环境来说，编译时是否加上-fPIC, 都不会对链接产生影响，只是一份代码的在内存中有几个副本的问题(而且对于静态库而言结果都是一样的)。但在64位的环境下装载时重定位的方式存在一个问题就是在我们的64位环境下用来进行位置偏移定位的cpu指令只支持32位的偏移, 但实际中位置的偏移是完全可能超过64位的,所以在这种情况下编译器要求用户必须采用-fPIC的方式进行编译的程序才可以在共享库中使用。从理论上来说-fPIC由于多一次内存取址的调用，在性能上会有所损失。不过从目前的一些测试中还无法明显的看出加上-fPIC后对库的性能有多大的损失，这个可能和现在使用的机器缓存以及大量寄存器的存在相关。</p>
@@ -609,28 +597,25 @@ static int foo<span class="o">()</span><span class="p">;</span>
 <li>-fPIC与-fpic。上面的介绍可以看到，gcc要使用地址无关代码加上-fPIC即可，但是在gcc的手册中我们可以看到一个-fpic(区别在一个大写一个小写)的参数，从功能上来说它们都是一样的。-fpic在一些特定的环境中（包括硬件环境)可以有针对性的进行优化，产生更小更快的代码，但是由于受到平台的限制，如编译环境、开发环境、运行环境都不完全统一的情况下面使用fpic有一定未知的风险，所有决大多数情况下我们使用-fPIC来产生地址无关代码。</li>
 <li>共享内存效率。共享内存在只读的情况下性能和读普通内存是一样的(如果不算第一载入的消耗），而且由于是多个进程共享对cpu cache还显的相对友好。</li>
 </ol>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>同时存在静态库和动态库</dt>
-<dd><p class="first last">前面提到编译动态库的时候有提到编译动态库可以像编译静态库那样采用 <cite>-Lpath -lxx</cite> 的方式进行，但这里存在一个问题，如果在path目录下既有动态库又有静态库的时候的行为又是什么样地？事实上在这种情下，链接器优先选择采用动态库的方式进行编译。比如在同一目录下存在libx.a和libx.so，那么在链接的时候会优先选择libx.so进行链接。为了能够控制动态库和静态库的编译, 有下面的几种方式：</p>
-</dd>
+<dd>前面提到编译动态库的时候有提到编译动态库可以像编译静态库那样采用 <cite>-Lpath -lxx</cite> 的方式进行，但这里存在一个问题，如果在path目录下既有动态库又有静态库的时候的行为又是什么样地？事实上在这种情下，链接器优先选择采用动态库的方式进行编译。比如在同一目录下存在libx.a和libx.so，那么在链接的时候会优先选择libx.so进行链接。为了能够控制动态库和静态库的编译, 有下面的几种方式：</dd>
 </dl>
 </li>
 </ul>
-<ol class="loweralpha">
+<ol class="loweralpha simple">
 <li><dl class="first docutils">
 <dt>直接使用要编译的库</dt>
-<dd><p class="first last">在前面也提到了在编译静态库的时候有三种方式：1、目标文件.o直接使用；2、静态库文件.a直接编译；3、采用 <cite>-L -l</cite> 方式进行编译</p>
-</dd>
+<dd>在前面也提到了在编译静态库的时候有三种方式：1、目标文件.o直接使用；2、静态库文件.a直接编译；3、采用 <cite>-L -l</cite> 方式进行编译</dd>
 </dl>
 </li>
 </ol>
 <p>编译的时候如果不采用 <cite>-Lpath -lxx</cite> 的方式进行编译, 而且直接写上 <cite>path/libx.a</cite> 或者 <cite>path/libx.so</cite> 进行编译，那么在链接的时候就是使用我们指定的.a或者.so进行编译不会出现所谓的动态库优先还是静态库优先的问题。但这个方案需要知道编译库的路径。</p>
-<ol class="loweralpha" start="2">
+<ol class="loweralpha simple" start="2">
 <li><dl class="first docutils">
 <dt>--static参数</dt>
-<dd><p class="first">在gcc的编译的时候加上 <cite>--static</cite> 参数，这样在编译的时候就会优先选择静态库进行编译，而不是按照默认的情况选择动态库进行编译。不过使用 <cite>--static</cite> 参数会带来另外的问题，不推荐使用，主要会带来下面的问题：</p>
-<ol class="last arabic simple">
+<dd>在gcc的编译的时候加上 <cite>--static</cite> 参数，这样在编译的时候就会优先选择静态库进行编译，而不是按照默认的情况选择动态库进行编译。不过使用 <cite>--static</cite> 参数会带来另外的问题，不推荐使用，主要会带来下面的问题：<ol class="last arabic">
 <li>如果只有动态库，而不存在同名的静态库，链接的时候也不会报错，但在运行的时候可能会出现错误 <cite>/lib/ld64.so.1: bad ELF interpreter:</cite></li>
 <li>由于程序本身在运行的需要系统中一些库的支持，包括libc, libm, phtread等库，在采用 <cite>--static</cite> 编译方式之后，链接的就是这些库的静态编译版本(glibc还是提供了静态编译的版本)，我们等于使用的是编译机上的库，但是我们的运行环境可能和编译机有所不同，glibc这些动态库的存在本身的目的就是为了能让在一台机器上编译好的库能够比较方便的移到另外的机器上，程序本身只需要关注接口，至于从接口到底层的部分由每台机器上的.so来处理。另外就是glibc --static编译可能会产生下面的warning:</li>
 </ol>
@@ -638,7 +623,7 @@ static int foo<span class="o">()</span><span class="p">;</span>
 </dl>
 </li>
 </ol>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>warning: Using <span class="s1">&#39;getservbyport_r&#39;</span> in statically linked applications requires at runtime the shared libraries from the glibc version used <span class="k">for</span> linking
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>warning: Using <span class="s1">&#39;getservbyport_r&#39;</span> in statically linked applications requires at runtime the shared libraries from the glibc version used <span class="k">for</span> linking
 </pre></div>
 </td></tr></table><p>这个主要原因是由于 <cite>getservbyport_r</cite> 这样的接口还是需要动态库的支持才可以运行，许多glibc的函数都存在这样的问题，特别是网络编程的接口中是很常见的。另外，还有一些其他方面的问题：</p>
 <ol class="arabic simple">
@@ -647,15 +632,14 @@ static int foo<span class="o">()</span><span class="p">;</span>
 <li>--static之后会导致代码大小变大，对cpu代码cache不友好，浪费内存空间，不过对于小代码问题也不大。</li>
 </ol>
 <p>早期有一些测试表明在32位的环境下，采用--static全部使用静态库可以使程序性能有1%~3%的提高，这个主要原因在于-fPIC产生的二次寻址问题导致(glibc那些库都是采用了-fPIC的方式进行编译)。但是如果机器缓存大，代码小，这种的性能提高实在是很有限了。在运行了多个程序的机器上反倒可能由于cache不友好有反效果。另外注意就是原来在32位下有性能优势当升级到64位机器上可能就没有优势了。</p>
-<ol class="loweralpha" start="3">
+<ol class="loweralpha simple" start="3">
 <li><dl class="first docutils">
 <dt>链接参数控制</dt>
-<dd><p class="first last">链接器中提供了 <cite>-dn -dy</cite> 参数来控制使用的是动态库还是静态库，-dn表示后面使用的是静态库，-dy表示使用的是动态库。如：</p>
-</dd>
+<dd>链接器中提供了 <cite>-dn -dy</cite> 参数来控制使用的是动态库还是静态库，-dn表示后面使用的是静态库，-dy表示使用的是动态库。如：</dd>
 </dl>
 </li>
 </ol>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>g++ -Lpath -Wl,-dn -lx -Wl,-dy -lpthread
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>g++ -Lpath -Wl,-dn -lx -Wl,-dy -lpthread
 </pre></div>
 </td></tr></table><p>这样如果在path路径下有libx.so和libx.a这个时候只会用到libx.a。注意在最后的地方如果没有 <cite>-Wl,-dy</cite> 让后面的库都使用动态库，可能会报出 <cite>cannot find -lgcc_s</cite> 的错误，这是由于glibc的.a库和.so库名字不同，--static会自动处理，但是 -Wl,-dy却不会去识别这个问题。</p>
 <p>小提示：</p>
@@ -718,34 +702,31 @@ static int foo<span class="o">()</span><span class="p">;</span>
 </dl>
 </li>
 </ul>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span class="nb">export </span><span class="nv">LD_DEBUG</span><span class="o">=</span><span class="nb">help</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">LD_DEBUG</span><span class="o">=</span><span class="nb">help</span>
 </pre></div>
 </td></tr></table><p>随便运行一个程序就可以看到对于LD_DEBUG的使用说明。以下则看到整个装载过程：</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span class="nb">export </span><span class="nv">LD_DEBUG</span><span class="o">=</span>files
+3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">LD_DEBUG</span><span class="o">=</span>files
 
 ./main
 </pre></div>
-</td></tr></table><ol class="arabic" start="3">
+</td></tr></table><ol class="arabic simple" start="3">
 <li><dl class="first docutils">
 <dt><strong>版本控制</strong></dt>
-<dd><p class="first last">系统中存在了大量的动态库和静态库，并且每个库都会随着库的升级和更新，形成各种的版本，这些版本之间又存在了各种各样的兼容或者不兼容的问题。linux中是如何维护和管理这些库的？这里介绍了linux在这方面所作的一些工作。下面的这些都是基于我们现在使用的64位开发环境中的情况, 与32位的老版本存在了一定程度上的不兼容。</p>
-</dd>
+<dd>系统中存在了大量的动态库和静态库，并且每个库都会随着库的升级和更新，形成各种的版本，这些版本之间又存在了各种各样的兼容或者不兼容的问题。linux中是如何维护和管理这些库的？这里介绍了linux在这方面所作的一些工作。下面的这些都是基于我们现在使用的64位开发环境中的情况, 与32位的老版本存在了一定程度上的不兼容。</dd>
 </dl>
 </li>
 </ol>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>命名</dt>
-<dd><p class="first last">在linux系统中对于一个共享库的命名一般是　<cite>libname.so.x.y.z</cite> 。不过在linux中　也有不少不遵守上面的命名的，比如glibc的动态库叫libc-2.3.5.so, 版本号在.so前面。这里又存在了另一个问题，由于版本号和命名捆绑在一起，那么当库升级的时候有怎么把版本号给对应上呢？</p>
-</dd>
+<dd>在linux系统中对于一个共享库的命名一般是　<cite>libname.so.x.y.z</cite> 。不过在linux中　也有不少不遵守上面的命名的，比如glibc的动态库叫libc-2.3.5.so, 版本号在.so前面。这里又存在了另一个问题，由于版本号和命名捆绑在一起，那么当库升级的时候有怎么把版本号给对应上呢？</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>编译和载入的版本</dt>
-<dd><p class="first last">先看一下pthread库在系统中的情况，(下面是以64位开发机为例,32位路径有所不同其它都一样)。在 <cite>/usr/lib64/</cite>　中可以找到 <cite>libpthread.so</cite> ，cat 一下可以看到这其实是一个文本文件：</p>
-</dd>
+<dd>先看一下pthread库在系统中的情况，(下面是以64位开发机为例,32位路径有所不同其它都一样)。在 <cite>/usr/lib64/</cite>　中可以找到 <cite>libpthread.so</cite> ，cat 一下可以看到这其实是一个文本文件：</dd>
 </dl>
 </li>
 </ul>
@@ -753,7 +734,7 @@ static int foo<span class="o">()</span><span class="p">;</span>
 2
 3
 4
-5</pre></div></td><td class="code"><div class="highlight"><pre>/* GNU ld script
+5</pre></div></td><td class="code"><div class="highlight"><pre><span></span>/* GNU ld script
    Use the shared library, but some functions are only in
    the static library, so try that secondarily.  */
 OUTPUT_FORMAT<span class="o">(</span>elf64-x86-64<span class="o">)</span>
@@ -831,9 +812,9 @@ GROUP <span class="o">(</span> /lib64/libpthread.so.0 /usr/lib64/libpthread_nons
 45
 46
 47
-48</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">//share.cpp</span>
-<span class="cp">#include &lt;stdio.h&gt;</span>
-<span class="cp">#include &lt;stdlib.h&gt;</span>
+48</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">//share.cpp</span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
 
 <span class="cp">#if defined(__DATE__) &amp;&amp; defined(__TIME__)</span>
 <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">BUILT_DATE</span> <span class="o">=</span> <span class="n">__DATE__</span> <span class="s">&quot; &quot;</span> <span class="n">__TIME__</span><span class="p">;</span>
@@ -882,22 +863,21 @@ GROUP <span class="o">(</span> /lib64/libpthread.so.0 /usr/lib64/libpthread_nons
 </pre></div>
 </td></tr></table><p>其中 <cite>LD_SO_PATH</cite> 表示了所使用的加载器，这里要注意32位和64位的区别，这里把过程简化了用宏 <cite>__i386</cite> 来判断32位与64位。 <cite>section(&quot;.interp&quot;)</cite> 设置了运行使用的载入器。 <cite>so_main</cite> 是运行程序的地方，这里写上供享编译的信息，当然这个地方可以换成别的什么名字，在编译的时候需要加上 <cite>-Wl,-e,so_main</cite> ，指明了动态库的实际的入口位置(这里是so_name, 也可以换成xxx)。采用的编译参数如下：</p>
 <blockquote>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre>g++ -shared -O2 -g -fPIC -D__SOVERSION__<span class="o">=</span><span class="s2">&quot;\&quot;1.0.0.0\&quot;&quot;</span> -Wl,-e,so_main share.cpp -o libshare.so
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span>g++ -shared -O2 -g -fPIC -D__SOVERSION__<span class="o">=</span><span class="s2">&quot;\&quot;1.0.0.0\&quot;&quot;</span> -Wl,-e,so_main share.cpp -o libshare.so
 </pre></div>
 </td></tr></table></blockquote>
 <p>在把生成的.o与共享的主程序链接到一起，就可以直接运行共享库了。</p>
-<ol class="arabic" start="3">
+<ol class="arabic simple" start="3">
 <li><dl class="first docutils">
 <dt><strong>总结和建议</strong></dt>
-<dd><p class="first last">上面介绍库(包括静态库和共享库)链接的过程，并对应其实现进行了分析，并且针对编译中出现的问题进行分析和解决。这对于我们使用库是有一定的帮助的。这里对于库的编写和使用提出一些建议：</p>
-</dd>
+<dd>上面介绍库(包括静态库和共享库)链接的过程，并对应其实现进行了分析，并且针对编译中出现的问题进行分析和解决。这对于我们使用库是有一定的帮助的。这里对于库的编写和使用提出一些建议：</dd>
 </dl>
 </li>
 </ol>
-<ul>
+<ul class="simple">
 <li><dl class="first docutils">
 <dt>静态库</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>尽量不要使用--static参数，对于一些特殊的必须要使用.so的情况，可以考虑使用-Wl,-dn 的方式进行</li>
 <li>64位环境中编译加上-fPIC。虽然是静态库，但很可能会被用作共享库的一部分</li>
 <li>链接的时候注意链接的顺序，越是基础库越是在后面</li>
@@ -911,42 +891,35 @@ GROUP <span class="o">(</span> /lib64/libpthread.so.0 /usr/lib64/libpthread_nons
 <li><dl class="first docutils">
 <dt>开发</dt>
 <dd><ol class="first last arabic">
-<li><p class="first">对外接口尽量使用基本类型，不要使用C++类，如果一定需要建议采用指针的方式</p>
-</li>
-<li><p class="first">对外接口采用 <cite>extern &quot;C&quot;</cite> 的方式提供，不要直接使用一般的C++接口，这主要是从接口的方便性考虑，毕竟都不希望采用&quot;_fooIV&quot;这种形式的接口进行访问</p>
-</li>
-<li><p class="first">共享库的生成文件需要带上我们的4位版本号，格式与linux的格式相同，如 libmylib.so.1.1.0.0</p>
-</li>
+<li>对外接口尽量使用基本类型，不要使用C++类，如果一定需要建议采用指针的方式</li>
+<li>对外接口采用 <cite>extern &quot;C&quot;</cite> 的方式提供，不要直接使用一般的C++接口，这主要是从接口的方便性考虑，毕竟都不希望采用&quot;_fooIV&quot;这种形式的接口进行访问</li>
+<li>共享库的生成文件需要带上我们的4位版本号，格式与linux的格式相同，如 libmylib.so.1.1.0.0</li>
 <li><dl class="first docutils">
 <dt>共享库需要能够自运行，运行需要输出版本号、编译时间、库的简单说明，DEMO见上文中共享库可执行部分. 输出格式建议：</dt>
-<dd><ol class="first last arabic simple">
+<dd><ol class="first last arabic">
 <li>采用printf输出，考虑到以后可能可以用脚本分析。输出格式参考DEMO的样式</li>
 </ol>
 </dd>
 </dl>
 </li>
-<li><p class="first">小心使用 <cite>-rdynamic</cite> 参数，能够不使用就不要使用</p>
-</li>
-<li><p class="first">尽量保证主程序的编译依赖与动态库的编译依赖相同，特别是在主程序代码中使用-rdynamic。</p>
-</li>
+<li>小心使用 <cite>-rdynamic</cite> 参数，能够不使用就不要使用</li>
+<li>尽量保证主程序的编译依赖与动态库的编译依赖相同，特别是在主程序代码中使用-rdynamic。</li>
 </ol>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>发布</dt>
-<dd><p class="first last">动态库发布到特定目录下除了要有带版本号的.so，还需要同时有一个未带版本号的.so，比如在output/lib目录需要有 <cite>libmylib.so.1.1.0.0</cite> 和一个软链接 <cite>libmylib.so</cite> 指向 <cite>libmylib.1.1.0.0</cite> ，这里的 <cite>libmylib.so</cite> 软链接主要是给其它程序编译期使用的。</p>
-</dd>
+<dd>动态库发布到特定目录下除了要有带版本号的.so，还需要同时有一个未带版本号的.so，比如在output/lib目录需要有 <cite>libmylib.so.1.1.0.0</cite> 和一个软链接 <cite>libmylib.so</cite> 指向 <cite>libmylib.1.1.0.0</cite> ，这里的 <cite>libmylib.so</cite> 软链接主要是给其它程序编译期使用的。</dd>
 </dl>
 </li>
 <li><dl class="first docutils">
 <dt>上线</dt>
 <dd><ol class="first last arabic">
-<li><p class="first">严禁对于.so采取直接copy覆盖的方式。</p>
-</li>
+<li>严禁对于.so采取直接copy覆盖的方式。</li>
 <li><dl class="first docutils">
 <dt>更新.so, 可以采用两种方式：</dt>
-<dd><ol class="first last arabic simple">
+<dd><ol class="first last arabic">
 <li>软链接方式，程序运行使用的是 <cite>libmylib.so</cite> 软链接，上线的时候采用的是把 <cite>libmylib.so</cite> 链接指向 <cite>libmylib.so.1.1.0.0</cite> ，由于原来的程序还在，这样不会出现问题</li>
 <li>mv方式，旧的.so需要先mv成另外的文件名，然后再放入新的.so</li>
 </ol>
@@ -955,17 +928,15 @@ GROUP <span class="o">(</span> /lib64/libpthread.so.0 /usr/lib64/libpthread_nons
 </li>
 <li><dl class="first docutils">
 <dt>需要确认.so已经被载入，由于.so的使用本身有2种方式，需要考虑下面两种情况：</dt>
-<dd><ol class="first last arabic simple">
+<dd><ol class="first last arabic">
 <li>dlopen方式，这种重新载入可以适用于热切换，这个要求RD根据代码逻辑来控制，一般可以从日志看出</li>
 <li>LD_LIBRARY_PATH指定路径，这种情况一般第三方库的情况比较多，这个时候需要把程序重启</li>
 </ol>
 </dd>
 </dl>
 </li>
-<li><p class="first">所有操作完毕之后，需要用 <cite>/usr/sbin/lsof -p pid</cite> 查看载入的动态库是否是我们需要的</p>
-</li>
-<li><p class="first">不要在终端或者 <cite>.bash_profile</cite> 等全局环境中加入 <cite>LD_LIBRARY_PATH</cite> ，在启动需要.so的程序脚本中加入即可</p>
-</li>
+<li>所有操作完毕之后，需要用 <cite>/usr/sbin/lsof -p pid</cite> 查看载入的动态库是否是我们需要的</li>
+<li>不要在终端或者 <cite>.bash_profile</cite> 等全局环境中加入 <cite>LD_LIBRARY_PATH</cite> ，在启动需要.so的程序脚本中加入即可</li>
 </ol>
 </dd>
 </dl>
@@ -1001,7 +972,6 @@ GROUP <span class="o">(</span> /lib64/libpthread.so.0 /usr/lib64/libpthread_nons
                 <li class="list-group-item"><a href="http://www.baidu.com/"><i class="fa fa-百度-square fa-lg"></i> 百度</a></li>
                 <li class="list-group-item"><a href="http://google.com.hk/"><i class="fa fa-google-square fa-lg"></i> Google</a></li>
                 <li class="list-group-item"><a href="https://github.com/"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
-                <li class="list-group-item"><a href="http://blackfox1983.github.io/wheels/"><i class="fa fa-wheels基础库-square fa-lg"></i> Wheels基础库</a></li>
               </ul>
             </li>
 
@@ -1037,6 +1007,11 @@ GROUP <span class="o">(</span> /lib64/libpthread.so.0 /usr/lib64/libpthread_nons
                     <li class="list-group-item tag-3">
                         <a href="http://blackfox1983.github.io/tag/o1diao-du-qi.html">
                             O(1)调度器
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/ubuntu.html">
+                            Ubuntu
                         </a>
                     </li>
                     <li class="list-group-item tag-3">

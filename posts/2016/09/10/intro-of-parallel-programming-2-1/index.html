@@ -196,7 +196,7 @@ BlackFox' Home            </a>
 13
 14
 15
-16</pre></div></td><td class="code"><div class="highlight"><pre><span class="c1">// x = y;</span>
+16</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="c1">// x = y;</span>
 <span class="n">mov</span> <span class="n">eax</span><span class="p">,</span><span class="n">dword</span> <span class="n">ptr</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span>
 <span class="n">mov</span> <span class="n">dword</span> <span class="n">ptr</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span><span class="n">eax</span>
 
@@ -216,7 +216,7 @@ BlackFox' Home            </a>
 </td></tr></table><p>很显然，x=1是原子操作。因为x是int类型，32位CPU上int占32位，在X86上由硬件直接提供了原子性支持。实际上不管有多少个线程同时执行类似x=1这样的赋值语句，x的值最终还是被赋的值（而不会出现例如某个线程只更新了x的低16位然后被阻塞，另一个线程紧接着又更新了x的低24位然后又被阻塞，从而出现x的值被损坏了的情况）。</p>
 <p>再来看x++和++x。其实类似x++, x+=2, ++x这样的操作在多线程环境下是需要同步的。因为X86会按三条指令的形式来处理这种语句：从内存中读x的值到寄存器中，对寄存器加1，再把新值写回x所处的内存地址（见上面的反汇编代码）。</p>
 <p>例如有两个线程，它们按照如下顺序执行（注意读x和写回x是原子操作，两个线程不能同时执行）：</p>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <caption>多线程执行 x++</caption>
 <colgroup>
 <col width="20%" />
@@ -255,7 +255,7 @@ BlackFox' Home            </a>
 <p>我们会发现最终x的值会是1而不是2，因为Thread1的结果被覆盖掉了。这种情况需要借助概述中的机制2来实现操作原子性。</p>
 <p>最后来看看x=y，在X86上它包含两个操作：读取y至寄存器，再把该值写入x。读y的值这个操作本身是原子的，把值写入x也是原子的，但是两者合起来是不是原子操作呢？这里需要取决于上下文，如果只是简单的 {y = 1; x = y;} 是不需要原子保证的。</p>
 <p>举个反例，例如有两个线程，线程1要执行{y = 1; x = y;}，线程2要执行{y = 2; y = 3;}，假设它们按如下时间顺序执行</p>
-<table border="1" class="docutils">
+<table border="1" class="colwidths-given docutils">
 <caption>多线程执行 x=y</caption>
 <colgroup>
 <col width="20%" />
@@ -312,7 +312,7 @@ BlackFox' Home            </a>
  8
  9
 10
-11</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">T</span> <span class="n">compare</span><span class="o">-</span><span class="n">and</span><span class="o">-</span><span class="n">swap</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">location</span><span class="p">,</span> <span class="n">T</span> <span class="n">cmp</span><span class="p">,</span> <span class="n">T</span> <span class="n">xchg</span><span class="p">)</span> <span class="p">{</span>
+11</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="n">compare</span><span class="o">-</span><span class="n">and</span><span class="o">-</span><span class="n">swap</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">location</span><span class="p">,</span> <span class="n">T</span> <span class="n">cmp</span><span class="p">,</span> <span class="n">T</span> <span class="n">xchg</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="k">do</span> <span class="n">atomically</span>
     <span class="p">{</span>
@@ -341,7 +341,7 @@ BlackFox' Home            </a>
 13
 14
 15
-16</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span>
+16</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="kr">inline</span> <span class="kt">int</span>
 <span class="nf">rte_atomic32_cmpset</span><span class="p">(</span><span class="k">volatile</span> <span class="kt">uint32_t</span><span class="o">*</span> <span class="n">dst</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">exp</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">src</span><span class="p">)</span> <span class="p">{</span>
     <span class="kt">uint8_t</span> <span class="n">res</span><span class="p">;</span>
 
@@ -372,7 +372,7 @@ BlackFox' Home            </a>
  7
  8
  9
-10</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">T</span> <span class="n">fetch</span><span class="o">-</span><span class="n">and</span><span class="o">-</span><span class="n">add</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">location</span><span class="p">,</span> <span class="n">T</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+10</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="n">fetch</span><span class="o">-</span><span class="n">and</span><span class="o">-</span><span class="n">add</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">location</span><span class="p">,</span> <span class="n">T</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="k">do</span> <span class="n">atomically</span>
     <span class="p">{</span>
@@ -396,7 +396,7 @@ BlackFox' Home            </a>
 6
 7
 8
-9</pre></div></td><td class="code"><div class="highlight"><pre><span class="n">T</span> <span class="nf">exchange</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">location</span><span class="p">,</span> <span class="n">T</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+9</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="nf">exchange</span><span class="p">(</span><span class="n">T</span><span class="o">*</span> <span class="n">location</span><span class="p">,</span> <span class="n">T</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
 
     <span class="k">do</span> <span class="n">atomically</span>
     <span class="p">{</span>
@@ -437,7 +437,6 @@ BlackFox' Home            </a>
                 <li class="list-group-item"><a href="http://www.baidu.com/"><i class="fa fa-百度-square fa-lg"></i> 百度</a></li>
                 <li class="list-group-item"><a href="http://google.com.hk/"><i class="fa fa-google-square fa-lg"></i> Google</a></li>
                 <li class="list-group-item"><a href="https://github.com/"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
-                <li class="list-group-item"><a href="http://blackfox1983.github.io/wheels/"><i class="fa fa-wheels基础库-square fa-lg"></i> Wheels基础库</a></li>
               </ul>
             </li>
 
@@ -473,6 +472,11 @@ BlackFox' Home            </a>
                     <li class="list-group-item tag-3">
                         <a href="http://blackfox1983.github.io/tag/o1diao-du-qi.html">
                             O(1)调度器
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/ubuntu.html">
+                            Ubuntu
                         </a>
                     </li>
                     <li class="list-group-item tag-3">

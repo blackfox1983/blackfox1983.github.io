@@ -216,10 +216,10 @@ BlackFox' Home            </a>
 <p><strong>Google的开发工具体系介绍</strong></p>
 <p>其实Google是非常开放的，对外积极的技术分享，Paper, 也非常积极地参与开源，并且把非常核心的基础库和工具都开源出来，尤其是云计算这一块更是开放，<a class="reference external" href="https://cloud.google.com/bigtable/docs/">Cloud Bigtable</a>  也有了, Tensorflow也开源了。之前非常火热的 <a class="reference external" href="http://www.wired.com/2015/09/google-2-billion-lines-codeand-one-place/">关于代码库的介绍</a>  ，绝大部分的东西都已经讲得非常非常的详细清楚，可以说几乎没有任何的保留。真心想了解的话，其实还是非常容易的。</p>
 <p>2008年的时候，我在百度的基础平台部(后来叫基础架构部)，当时我们部门的一个重要任务就是维护整个公司的基础库, 当时最大的问题(相信／希望这些问题现在都不是问题了)就是 :</p>
-<ol class="arabic">
+<ol class="arabic simple">
 <li><dl class="first docutils">
 <dt>基础库开发难</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>为保证稳定，各种分支开发，非常难合并，风险也高。</li>
 <li>兼容成本高，因为不知道多少人在用，所以只能继续兼容十几年前的Case。</li>
 <li>编码规范执行难。低级错误/问题反复出现，没有有效的”上线前”检查。</li>
@@ -229,7 +229,7 @@ BlackFox' Home            </a>
 </li>
 <li><dl class="first docutils">
 <dt>基础库使用难</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>可用基础库少。只有专门的组才能贡献基础库。相对而言的，因为可能很多不小的公司连公司范围内的基础库都没有。</li>
 <li>使用示例少。同样相对而言，只有测试的Case和官方的示例，找不到真实生产环境中大家怎么用的，更谈不上什么最佳实践的比较了。</li>
 <li>版本升级难。因为”风险”高，自然大家默认不升级，一旦有需求或者安全漏洞要求升级的时候，会不得不做一个“大版本升级”, 测试压力大，还经常惊喜连连。</li>
@@ -240,7 +240,7 @@ BlackFox' Home            </a>
 </li>
 <li><dl class="first docutils">
 <dt>影响力小／推广难</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>大的版本升级(eg: C++14, Linux kernel)异常困难，改动很大。</li>
 <li>安全问题紧急响应慢。(记得当年Hash冲突的漏洞，涉及面广，几乎一整周全公司都鸡飞狗跳！)</li>
 <li>除了代码和设计文档，还需要举办非常多的“宣传”和“培训”来让大家了解。效果很差。</li>
@@ -253,10 +253,10 @@ BlackFox' Home            </a>
 <p>所有的这些问题几乎都可以通过 “全公司统一代码仓库” + “主干开发” 解决。当然，解决的过程并不会那么简单，这里包括大量的基础设施需要去完善。先不考虑如何达到这一步，但是我们可以设想一下，如果做好了，我们的编程环境将会如何美好？</p>
 <p>下面是以刚入职的同学，需要一点热身任务，通常是修点非常简单的Bug/Feature之类的为背景，编的故事:
 (纯属虚构，如有雷同，实属巧合)</p>
-<ol class="arabic">
+<ol class="arabic simple">
 <li><dl class="first docutils">
 <dt>理解任务</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>被Manager/TL分配一个小的Bug/Feature, 一般会给个相关模块的文档(不需要太细，但是系统的需求，设计和核心的逻辑, 代码在哪肯定还是有的)</li>
 <li>和TL同学约个1:1的小会，让再介绍下背景，讨论讨论决定个方案，注意记好笔记</li>
 </ul>
@@ -266,18 +266,15 @@ BlackFox' Home            </a>
 <li><dl class="first docutils">
 <dt>写代码</dt>
 <dd><ul class="first last">
-<li><p class="first">把笔记翻译成”中国式英语”输入到云端编辑器里</p>
-</li>
+<li>把笔记翻译成”中国式英语”输入到云端编辑器里</li>
 <li><dl class="first docutils">
 <dt>如果发现自己要写一段还蛮长的代码，就赶紧停下来</dt>
 <dd><ul class="first last">
-<li><p class="first">在公司的代码库里找找看，95%的可能性是已经有了，直接用那个现成的函数／库</p>
-</li>
-<li><p class="first">不会用? 没关系，搜一下他的Code Lab, Unitest或者别的人怎么用的</p>
-</li>
+<li>在公司的代码库里找找看，95%的可能性是已经有了，直接用那个现成的函数／库</li>
+<li>不会用? 没关系，搜一下他的Code Lab, Unitest或者别的人怎么用的</li>
 <li><dl class="first docutils">
 <dt>然后就开始试着编译, 各种编译器和检查工具会各种折腾你:</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>啊，这里不对，那里也不对。</li>
 <li>这个函数危险不让用，那个也不让用。</li>
 <li>这个代码你写了但是没用，建议删除。</li>
@@ -300,7 +297,7 @@ BlackFox' Home            </a>
 <dd><ul class="first last">
 <li><dl class="first docutils">
 <dt>终于编译通过，然后单元测试</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>当然有工具会自动计算哪些受影响的测试需要跑</li>
 <li>同样逐一安抚出问题的单元测试</li>
 <li>这里可能不只是你的代码单元测试，还包括依赖你的其他代码库的单元测试出错，你要决定是修改你的代码行为，还是更新他们的测试代码</li>
@@ -310,7 +307,7 @@ BlackFox' Home            </a>
 </li>
 <li><dl class="first docutils">
 <dt>跑完单测，又有一个工具跳出来：</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>你新加的代码单元测试覆盖率不够哟。。。</li>
 <li>如果覆盖率低于80%的话，你的名字会被飘红，并在Team的Dashboard上示众!</li>
 <li>所以还得照猫画虎加几个单元测试</li>
@@ -320,7 +317,7 @@ BlackFox' Home            </a>
 </li>
 <li><dl class="first docutils">
 <dt>然后就是跑集成测试/End2End测试</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>和单测一样，也是分布式系统里去跑，并不是本机跑测试，但是一般时间要久，很多的大型测试。</li>
 </ul>
 </dd>
@@ -335,7 +332,7 @@ BlackFox' Home            </a>
 <dd><ul class="first last">
 <li><dl class="first docutils">
 <dt>心急的也可以同步送给Owner去Review</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>需要拿到双重的Approval: Readability + Approval</li>
 <li>一个是代表你的代码符合该语言的编程风格</li>
 <li>另一个代表你的代码符合这个模块Owner的要求(一般是TL或者其他资深员工，在他看来符合当前的系统要求，设计和实现均没有问题)</li>
@@ -346,7 +343,7 @@ BlackFox' Home            </a>
 </li>
 <li><dl class="first docutils">
 <dt>Review当然没有那么容易通过，一堆鸡毛蒜皮的修改意见过来:</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>这个变量名取得不准确，应该用XX单词更好一点，这个应该是动词/复数...</li>
 <li>可读性差了一点，简化逻辑，抽象抽象，再加点注释。。。</li>
 <li>实现太复杂了，原来的实现不支持这种改动，先重构!</li>
@@ -355,20 +352,19 @@ BlackFox' Home            </a>
 </dd>
 </dl>
 </li>
-<li><p class="first">根据Review意见修改，也可以证明你的方法是更优的，这样的过程有可能会要来回几轮。</p>
-</li>
+<li>根据Review意见修改，也可以证明你的方法是更优的，这样的过程有可能会要来回几轮。</li>
 </ul>
 </dd>
 </dl>
 </li>
 </ol>
-<ol class="arabic" start="4">
+<ol class="arabic simple" start="4">
 <li><dl class="first docutils">
 <dt>提交</dt>
 <dd><ul class="first last">
 <li><dl class="first docutils">
 <dt>同样逐一安抚Review后，终于可以开始提交了</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>当然是各种测试重新跑起!</li>
 <li>然后被发现: 报歉，有冲突。。。需要合并！</li>
 <li>因为是主干开发，所以大家都在写代码，都在快速的提交，你的CL太大了，或者拖的时间太长了，就越有可能需要合并，所以大家都非常倾向于小步快走，很多的小CL, Review起来快，出错机会也少，快速提交，尽可能避免合并。</li>
@@ -383,15 +379,14 @@ BlackFox' Home            </a>
 </li>
 </ol>
 <p>终于提交完成了，代码这个时候就进入到Trunk了。对所有人都可见，新的提交如果和你的CL有冲突，合并责任就到他那里了。</p>
-<ol class="arabic" start="5">
+<ol class="arabic simple" start="5">
 <li><dl class="first docutils">
 <dt>上线</dt>
 <dd><ul class="first last">
-<li><p class="first">然后持续集成系统就会继续测试他，并开Release Branch</p>
-</li>
+<li>然后持续集成系统就会继续测试他，并开Release Branch</li>
 <li><dl class="first docutils">
 <dt>新的Release一般会慢慢发布到Prod环境中去</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>先在Dev环境里回归测试</li>
 <li>通过后到Staging环境(准线上环境，甚至数据都是线上的，一般至少部分线上采样数据)</li>
 <li>全部通过后正式部署到Prod环境上去</li>
@@ -403,7 +398,7 @@ BlackFox' Home            </a>
 </li>
 <li><dl class="first docutils">
 <dt>代码上到线上后，就开始所谓的A/B测试了</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>通过开关放流量, 边观察对比数据来决定继续放量，还是继续改进。</li>
 <li>这个过程可长可短，所有的A/B测试也都通过，数据喜人的话，就可以全流量了，这个项目就基本大功告成，后面持续观察数据并改进！</li>
 <li>当然只是简单的Bug修复之类的，可能会直接跳过A/B测试全流量。</li>
@@ -417,14 +412,12 @@ BlackFox' Home            </a>
 </li>
 </ol>
 <p>这整个过程是有一点偏理想，偏简化的故事，真实情况下当然更复杂一点，尤其是越来越复杂的项目，系统越复杂，情况会越来越多。再讲几个真实的故事:</p>
-<ol class="arabic">
-<li><p class="first">某次我的改动因为动了几个接口的定义，然后直接40W个测试跑起来，一个测试其实是一组测试点。</p>
-</li>
-<li><p class="first">很多东西其实也没有办法量化，除了代码检查等”硬工具”外，其实还有一些小的”软工具”来帮助提升代码的质量, Eg: 前面提到的覆盖率不够飘红示众；重构代码后，可能会得到一个小红花。</p>
-</li>
+<ol class="arabic simple">
+<li>某次我的改动因为动了几个接口的定义，然后直接40W个测试跑起来，一个测试其实是一组测试点。</li>
+<li>很多东西其实也没有办法量化，除了代码检查等”硬工具”外，其实还有一些小的”软工具”来帮助提升代码的质量, Eg: 前面提到的覆盖率不够飘红示众；重构代码后，可能会得到一个小红花。</li>
 <li><dl class="first docutils">
 <dt>百度当年的痛点基本从源头上解决了(成本就是任何时候都得保证代码的质量，否则越积越多，越没有办法收拾！):</dt>
-<dd><ul class="first last simple">
+<dd><ul class="first last">
 <li>分支合并？没有分支啊。如果最新的主干有问题，可以取“最近的”绿色版本发布。</li>
 <li>这个Feature有没有人用，一搜就知道了。</li>
 <li>有大的漏洞，一个人／组给出Patch, 把所有的代码都改了。</li>
@@ -433,8 +426,7 @@ BlackFox' Home            </a>
 </dd>
 </dl>
 </li>
-<li><p class="first">当然注重质量和注意自己的节操一样不是没有代价，著名的Spanner据说是一个做了7年快烂尾的项目，好在神牛们咬紧牙关，总算是熬过来了。类似的项目在某度做了两年多，老板觉得这帮人好像也没干出啥事来，关掉算了，省得白浪费钱。（应该很多人知道我在说啥）</p>
-</li>
+<li>当然注重质量和注意自己的节操一样不是没有代价，著名的Spanner据说是一个做了7年快烂尾的项目，好在神牛们咬紧牙关，总算是熬过来了。类似的项目在某度做了两年多，老板觉得这帮人好像也没干出啥事来，关掉算了，省得白浪费钱。（应该很多人知道我在说啥）</li>
 </ol>
 <p><strong>工作流程：质量与效率的权衡</strong></p>
 <p>听完上面一系列的流程后，大家可能会发现，这”效率”也太差了，没有一两个星期，根本上不了线啊！对比国内公司，人家各种”敏捷”啊，线上调Bug, CXO 23:30提的问题/需求，也当天能上线解决！所以刚开始的时候，我也忧心忡忡，还和Manager来谈这个提升效率的问题, 要不这种小改动咱就直接过了，砍掉点测试？人家一听就火了，你竟然想牺牲质量要那点速度？</p>
@@ -462,18 +454,14 @@ BlackFox' Home            </a>
 </ol>
 <p>我也是工程师，我当然乐得大家都有个牛B的Offer，我也是潜在的受益者啊，但是这世界上没有任何可持续的指数增长! 从长远考虑，最终还是是毁掉整个市场，所有人一起为这种疯狂买单的。</p>
 <p>Google怎么招聘的?  <a class="reference external" href="https://www.google.ch/about/careers/lifeatgoogle/hiringprocess/">官方解释</a>   在这里：我也并不认为这个有多合理，确实有很多水货混进来，也有很多优秀的人被拒绝了，但是谁有真正靠谱的测量办法呢？而且还要放到全球几万人的这么大规模来实施？说说我的理解, 他们花了多少心思来努力让这个过程相对更加合理(非官方解释，请勿相信，G也完全不需要我来背书做这个证明，我只是希望能够对各位设立自己公司的招聘体系的时候能够有一些参考价值):</p>
-<ol class="arabic">
-<li><p class="first">全公司统一的招聘标准(极个别的职位例外)。极强的推荐可以不用电面直接on-site，但是过不了面试，你啥也别想了。Larry的小舅子估计也只能当当董事当不了工程师。选拨阶段远离需求方, 尽量不受非理性的”求贤若渴”所影响。</p>
-</li>
-<li><p class="first">多轮对等的面试来校验。谁都有看走眼的时候，让”随机”性尽可能地降低。</p>
-</li>
-<li><p class="first">重点考察当下的能力(比如对码农来说就是Coding)，减少受光环的影响。很多光环是会退色的!</p>
-</li>
-<li><p class="first">对面试官的纪律要求和多轮的培训: 什么能问，什么不能问，问了什么，怎么回答都得如实的汇报。</p>
-</li>
+<ol class="arabic simple">
+<li>全公司统一的招聘标准(极个别的职位例外)。极强的推荐可以不用电面直接on-site，但是过不了面试，你啥也别想了。Larry的小舅子估计也只能当当董事当不了工程师。选拨阶段远离需求方, 尽量不受非理性的”求贤若渴”所影响。</li>
+<li>多轮对等的面试来校验。谁都有看走眼的时候，让”随机”性尽可能地降低。</li>
+<li>重点考察当下的能力(比如对码农来说就是Coding)，减少受光环的影响。很多光环是会退色的!</li>
+<li>对面试官的纪律要求和多轮的培训: 什么能问，什么不能问，问了什么，怎么回答都得如实的汇报。</li>
 <li><dl class="first docutils">
 <dt>对面试官的考核，过去面了多少，打分如何，最终多少人过了，什么样的人过了，什么样的没过? 综合这些一起考虑这个面试官的实力，不靠谱的面试官未必不是一个好员工，可能只是还没有掌握面试的技巧而已。</dt>
-<dd><ol class="first last arabic simple">
+<dd><ol class="first last arabic">
 <li>资深面试官配合新面试官，相互印证，一方面防止资深面试官思维僵化不合理，另一方面也防止新面试官尺度把握不够。</li>
 <li>更资深的招聘委员会(类似法院合议庭之类的)根据所有面试官的记录和所有推荐人的推荐来决定是否录用，面试官没有最终的发言权。</li>
 <li>在电面等初级阶段，表现实在太糟糕，可能会被直接拒绝。但是同样面试官需要出证明。</li>
@@ -481,12 +469,9 @@ BlackFox' Home            </a>
 </dd>
 </dl>
 </li>
-<li><p class="first">投诉/反馈的通道，确实有人投诉且有证据然后拿到新的面试机会的, 但好像极少。</p>
-</li>
-<li><p class="first">人都是会成长的，一年过后，再给一次新的机会!</p>
-</li>
-<li><p class="first">有时Google为了测试自己的招聘系统的可靠性，甚至会招几个本不合格的人进来，然后默默观察他们的表现。更不要说通过各种大数据优化招聘的来源渠道了。我们经常说: Google招聘最优秀的人和我，而我的贡献就是测试他们招聘系统的稳定性。</p>
-</li>
+<li>投诉/反馈的通道，确实有人投诉且有证据然后拿到新的面试机会的, 但好像极少。</li>
+<li>人都是会成长的，一年过后，再给一次新的机会!</li>
+<li>有时Google为了测试自己的招聘系统的可靠性，甚至会招几个本不合格的人进来，然后默默观察他们的表现。更不要说通过各种大数据优化招聘的来源渠道了。我们经常说: Google招聘最优秀的人和我，而我的贡献就是测试他们招聘系统的稳定性。</li>
 </ol>
 <p>网上应该还有很多文章讨论G家，或者湾区公司的招聘过程，这是一个非常非常成熟，信息非常完善的领域，在G家成为一个面试官其实不是那么容易，各种条件，各种培训后还要考核你的每一次面试表现，表现不好被劝退，我其实现在还不是面试官, 这些信息大部分是我做为被面试者的角度看到的。但是推荐了不少人过来面试，不少很优秀的人被拒(因为面试和国内的聊聊天式面试真的完全不一样)，有拿到Offer的，也有拿到Offer后拒了Google的。</p>
 <p>面试官和一线经理对一个公司来说是最最重要的“门户”，一个不够好的面试官可能会让公司损失一次招进优秀人才的机会，更要命的是可能会给公司招来一个大麻烦！而一个不够好的经理能够指数级的提升一个公司好员工的离职率！但是恰恰是这两个关键岗位上的人经常完全无人监管，没有人知道他们做得到底好不好？(很多时候不是他们不想做好，只是不会，或者真的不合适而已)</p>
@@ -549,7 +534,6 @@ BlackFox' Home            </a>
                 <li class="list-group-item"><a href="http://www.baidu.com/"><i class="fa fa-百度-square fa-lg"></i> 百度</a></li>
                 <li class="list-group-item"><a href="http://google.com.hk/"><i class="fa fa-google-square fa-lg"></i> Google</a></li>
                 <li class="list-group-item"><a href="https://github.com/"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
-                <li class="list-group-item"><a href="http://blackfox1983.github.io/wheels/"><i class="fa fa-wheels基础库-square fa-lg"></i> Wheels基础库</a></li>
               </ul>
             </li>
 
@@ -585,6 +569,11 @@ BlackFox' Home            </a>
                     <li class="list-group-item tag-3">
                         <a href="http://blackfox1983.github.io/tag/o1diao-du-qi.html">
                             O(1)调度器
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/ubuntu.html">
+                            Ubuntu
                         </a>
                     </li>
                     <li class="list-group-item tag-3">

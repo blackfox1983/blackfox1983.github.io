@@ -134,7 +134,7 @@ BlackFox' Home            </a>
 <p>结合之前原子操作部分的知识，可以简单认为能够直接调用一个原子操作实现的算法或程序就属于Wait-Free，比如下面的increment_reference_counter函数就是Wait-Free的，它封装了atomic_increment这个原子自增原语，多个线程可以同时调用这个函数对同一个内存变量进行自增，而无须任何阻塞（其实也是有阻塞的，是总线锁级别）。</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">increment_reference_counter</span><span class="p">(</span><span class="n">rc_base</span><span class="o">*</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>
+3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">increment_reference_counter</span><span class="p">(</span><span class="n">rc_base</span><span class="o">*</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">atomic_increment</span><span class="p">(</span><span class="n">obj</span><span class="o">-&gt;</span><span class="n">rc</span><span class="p">);</span>
 <span class="p">}</span>
 </pre></div>
@@ -151,7 +151,7 @@ BlackFox' Home            </a>
 5
 6
 7
-8</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">push</span><span class="p">(</span><span class="n">stack</span><span class="o">*</span> <span class="n">s</span><span class="p">,</span> <span class="n">node</span><span class="o">*</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+8</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">push</span><span class="p">(</span><span class="n">stack</span><span class="o">*</span> <span class="n">s</span><span class="p">,</span> <span class="n">node</span><span class="o">*</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">node</span><span class="o">*</span> <span class="n">head</span><span class="p">;</span>
 
     <span class="k">do</span> <span class="p">{</span>
@@ -167,7 +167,7 @@ BlackFox' Home            </a>
 3
 4
 5
-6</pre></div></td><td class="code"><div class="highlight"><pre><span class="kt">void</span> <span class="nf">increment_reference_counter</span><span class="p">(</span><span class="n">rc_base</span><span class="o">*</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">increment_reference_counter</span><span class="p">(</span><span class="n">rc_base</span><span class="o">*</span> <span class="n">obj</span><span class="p">)</span> <span class="p">{</span>
     <span class="kt">int</span> <span class="n">rc</span><span class="p">;</span>
     <span class="k">do</span> <span class="p">{</span>
         <span class="n">rc</span> <span class="o">=</span> <span class="n">obj</span><span class="o">-&gt;</span><span class="n">rc</span><span class="p">;</span>
@@ -215,7 +215,6 @@ BlackFox' Home            </a>
                 <li class="list-group-item"><a href="http://www.baidu.com/"><i class="fa fa-百度-square fa-lg"></i> 百度</a></li>
                 <li class="list-group-item"><a href="http://google.com.hk/"><i class="fa fa-google-square fa-lg"></i> Google</a></li>
                 <li class="list-group-item"><a href="https://github.com/"><i class="fa fa-github-square fa-lg"></i> GitHub</a></li>
-                <li class="list-group-item"><a href="http://blackfox1983.github.io/wheels/"><i class="fa fa-wheels基础库-square fa-lg"></i> Wheels基础库</a></li>
               </ul>
             </li>
 
@@ -251,6 +250,11 @@ BlackFox' Home            </a>
                     <li class="list-group-item tag-3">
                         <a href="http://blackfox1983.github.io/tag/o1diao-du-qi.html">
                             O(1)调度器
+                        </a>
+                    </li>
+                    <li class="list-group-item tag-3">
+                        <a href="http://blackfox1983.github.io/tag/ubuntu.html">
+                            Ubuntu
                         </a>
                     </li>
                     <li class="list-group-item tag-3">
