@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
 <head>
-    <title>怎么面试应聘者 - BlackFox' Home</title>
+    <title>协程-什么是协程 - BlackFox' Home</title>
     <!-- Using the latest rendering mode for IE -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
@@ -10,20 +10,20 @@
 
     <link href="http://blackfox1983.github.io/images/favicon.jpg" rel="icon">
 
-<link rel="canonical" href="http://blackfox1983.github.io/posts/2015/07/12/how-to-interview-others/">
+<link rel="canonical" href="http://blackfox1983.github.io/posts/2018/05/06/intro-of-coroutine-1/">
 
         <meta name="author" content="MiLimin" />
-        <meta name="keywords" content="面试" />
-        <meta name="description" content="怎么样面试应聘者才比较科学，这里是自己的一些观点" />
+        <meta name="keywords" content="并行编程；协程" />
+        <meta name="description" content="随着服务端开发对于性能以及效率的逐步提升，近几年协程被重新提起并发展。这里逐渐介绍下协程的基础知识，并在后续的篇章中通过实践逐步来研究相关的协程实现。" />
 
         <meta property="og:site_name" content="BlackFox' Home" />
         <meta property="og:type" content="article"/>
-        <meta property="og:title" content="怎么面试应聘者"/>
-        <meta property="og:url" content="http://blackfox1983.github.io/posts/2015/07/12/how-to-interview-others/"/>
-        <meta property="og:description" content="怎么样面试应聘者才比较科学，这里是自己的一些观点"/>
-        <meta property="article:published_time" content="2015-07-12" />
+        <meta property="og:title" content="协程-什么是协程"/>
+        <meta property="og:url" content="http://blackfox1983.github.io/posts/2018/05/06/intro-of-coroutine-1/"/>
+        <meta property="og:description" content="随着服务端开发对于性能以及效率的逐步提升，近几年协程被重新提起并发展。这里逐渐介绍下协程的基础知识，并在后续的篇章中通过实践逐步来研究相关的协程实现。"/>
+        <meta property="article:published_time" content="2018-05-06" />
             <meta property="article:section" content="技术" />
-            <meta property="article:tag" content="面试" />
+            <meta property="article:tag" content="并行编程；协程" />
             <meta property="article:author" content="MiLimin" />
 
 
@@ -97,10 +97,10 @@ BlackFox' Home            </a>
         <article>
             <header class="page-header">
                 <h1>
-                    <a href="http://blackfox1983.github.io/posts/2015/07/12/how-to-interview-others/"
+                    <a href="http://blackfox1983.github.io/posts/2018/05/06/intro-of-coroutine-1/"
                        rel="bookmark"
-                       title="Permalink to 怎么面试应聘者">
-                        怎么面试应聘者
+                       title="Permalink to 协程-什么是协程">
+                        协程-什么是协程
                     </a>
                 </h1>
             </header>
@@ -110,7 +110,7 @@ BlackFox' Home            </a>
 <footer class="post-info">
     <span class="label label-default">Date</span>
     <span class="published">
-        <i class="fa fa-calendar"></i><time datetime="2015-07-12T16:30:00+08:00"> 2015-07-12 16:30:00</time>
+        <i class="fa fa-calendar"></i><time datetime="2018-05-06T14:20:00+08:00"> 2018-05-06 14:20:00</time>
     </span>
 
 
@@ -122,44 +122,142 @@ BlackFox' Home            </a>
 
 
 <span class="label label-default">Tags</span>
-	<a href="http://blackfox1983.github.io/tag/mian-shi.html">面试</a>
+	<a href="http://blackfox1983.github.io/tag/bing-xing-bian-cheng-xie-cheng.html">并行编程；协程</a>
     
 </footer><!-- /.post-info -->                    </div>
                 </div>
-                <p>最近和公司G家一些高T聊，说到面试的这个事情，除了公司文化、性格等其他非技术能力外，在专业方面，主要分享了几个观点，即三个专业：</p>
-<ol class="arabic">
-<li><dl class="first docutils">
-<dt>准备问题专业</dt>
-<dd><ul class="first simple">
-<li>题目有量程。好的面试题应该和电压表一样有量程。循序渐进的可以发现面试者能力。即随着问题的演化，答案是可推导的、可循序渐进的</li>
-<li>避免类似的烧香问题、海盗杀人问题等。准备则秒答，没准备则答不出来。</li>
-<li>除非是专业方向招聘，认为一些知识点是应聘者应该知道的，否则避免问genenal的知识点问题。这些问题是可以google出来的。如对于非工程方向，避免问tcp建立连接的相关知识点</li>
-<li>避免白纸上手写代码。尽量提供笔记本供面试者写代码。一来可以看实际编码水平（一个连vim都不会用的人，你还指望他编码能力很高么？），二则直接可以直接作为feedback</li>
-</ul>
-<p>怎么搞到专业的面试问题</p>
-<ul class="last simple">
-<li>最好的题目是和工作（面试者工作相关或面试官工作相关）有关的、有发展的题目</li>
-<li>常见的题目，但是有多个解法（简单的、复杂的...）的</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>沟通过程专业</dt>
-<dd><ul class="first last simple">
-<li>面试官心态良好，位置合适（90度）。不是代表公司“灭”了面试者</li>
-<li>避免问与职位无关的私人问题（结婚、种族、小孩、年龄、薪资……），除非这些信息决定你是否录用他</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>面试feedback专业</dt>
-<dd><p class="first last">1、避免主观结论（如我觉得……），不要一副“你办事，我放心”的态度。要描述客观事实，可以增加基于事实描述的判断结论。方便后续面试官参考、评判</p>
-</dd>
-</dl>
-</li>
+                <p>本篇主要介绍协程的基础概念：</p>
+<ol class="arabic simple">
+<li><strong>什么是协程</strong></li>
 </ol>
+<p>Wiki: 协程是一种程序组件，是由子例程（过程、函数、例程、方法、子程序）的概念泛化而来的，子例程只有一个入口点且只返回一次，而协程允许多个入口点，可以在指定位置挂起和恢复执行。</p>
+<p>据Donald Knuth说：函数就是协程的一种特例。</p>
+<p>协程具备两个特点：</p>
+<ul class="simple">
+<li>协程的本地数据在后续调用中始终保持</li>
+<li>协程在控制离开时暂停执行，当控制再次进入时只能从离开的位置继续执行</li>
+</ul>
+<p>协程的历史：</p>
+<p>1958年，据Donald Knuth在《计算机程序设计的艺术》说，Melvin Conway在开发COBOL编译器的词法和句法分析器期间创造了协程这个词，并于1963年公开发表。</p>
+<p><em>这里略提下 Conway定律(196x年)：任意一个软件都反映出制造它的团队的组织结构，这是因为人们会以反映他们组织形式的方式工作。
+换句话说，分散的团队可能用分散的架构生成系统。项目团队的组织结构中的优点和弱点都将不可避免地反映在他们生成的结果系统中。
+这意味着，如果想要努力完成有效的IT架构，那么需要有有效的IT组织结构。</em></p>
+<p>协程 与 传统组件或技术 的对比：</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>协程 vs 函数</dt>
+<dd><ol class="first last arabic">
+<li>传统的程序都是依赖多个子程序（函数）的层次调用来完成的，如A调用B、B调用C，C执行完毕返回，B执行完毕返回，最后是A执行完毕返回；这些函数都是通过栈实现的，函数调用总是一个入口，一个栈空间，一次返回，调用顺序是明确的。</li>
+<li>协程的调用与函数不同，协程看上去也是函数，但是在执行过程中，可以显式中断，转而去执行其他函数，在适当的时候再返回来执行；这有点像操作系统的线程，执行过程中可能被挂起，让位于别的线程执行，稍后又从挂起的地方恢复执行。</li>
+<li>这个过程中，协程与协程之间实际上不是普通“调用者与被调者”的关系，他们之间的关系是对称的。</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>协程 vs 生成器</dt>
+<dd><ol class="first last arabic">
+<li>生成器（Generator）也是函数的一种泛化，但是比协程有局限性。</li>
+<li>具体的说，两者都可以调用(yield)多次，暂停执行并回到入口初执行。但是他们在控制执行后的处理是不同的，生成器只能将控制权交还给调用生成器的地方，也就是说，生成器主要用于简化迭代器的编写，因此其中的yield不能跳转到特定的函数，只能将值传回到调用者函数中。</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>协程 vs 递归</dt>
+<dd><ol class="first last arabic">
+<li>使用协程有点像使用递归，数据控制都切换到了不同的函数中。</li>
+<li>协程会更灵活高效，因为协程是yield而不是return，是resume执行而不是从头开始，因此更容易保存状态。</li>
+<li>递归函数则需要使用共享变量或传输状态参数。此外，递归调用需要新的堆栈而协程则可以复用现有的上下文。</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>协程 vs 回调</dt>
+<dd><ol class="first last arabic">
+<li>都实现异步通信，但是协程代码可读性、可维护性更好。</li>
+</ol>
+</dd>
+</dl>
+</li>
+</ul>
+<p>下面是来自wiki的协程的示例（注意 整体是单线程运行)：</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="n">var</span> <span class="n">q</span> <span class="p">:</span><span class="o">=</span> <span class="n">new</span> <span class="n">queue</span>
+
+<span class="n">coroutine</span> <span class="n">produce</span>
+    <span class="n">loop</span>
+        <span class="k">while</span> <span class="n">q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">full</span>
+            <span class="n">create</span> <span class="n">some</span> <span class="n">new</span> <span class="n">items</span>
+            <span class="n">add</span> <span class="n">the</span> <span class="n">items</span> <span class="n">to</span> <span class="n">q</span>
+        <span class="k">yield</span> <span class="n">to</span> <span class="n">consume</span>
+
+<span class="n">coroutine</span> <span class="n">consume</span>
+    <span class="n">loop</span>
+        <span class="k">while</span> <span class="n">q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">empty</span>
+            <span class="n">remove</span> <span class="n">some</span> <span class="n">items</span> <span class="kn">from</span> <span class="nn">q</span>
+            <span class="n">use</span> <span class="n">the</span> <span class="n">items</span>
+        <span class="k">yield</span> <span class="n">to</span> <span class="n">produce</span>
+</pre></div>
+</td></tr></table><ol class="arabic simple" start="2">
+<li><strong>为什么使用协程</strong></li>
+</ol>
+<p>核心问题还是 <strong>并发之痛</strong> 。</p>
+<p>真正做到好的并发是很难的，多核编程下，为了提高并发，不可避免的引入线程，在多线程下，又会导致竞争，因此需要需要同步，同步的执行，一定程度上又降低了并发度；
+并且在引入线程时，需要考虑内存、os调度成本、物理机器等信息来提高cpu利用率，操作成本非常高；</p>
+<p>而常用的优化方法，一般是设置和cpu核数相等的线程，来最大化的降低成本以及内存使用，这里常用的技术就是异步回调、协程；</p>
+<p>相比异步回调，协程可以脱颖而出的原因：</p>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>协程极高的执行效率</dt>
+<dd><ol class="first last arabic">
+<li>子程序切换不是线程切换，而是由程序自身控制，因此，没有线程切换的开销，和多线程比，线程数量越多，协程的性能优势就越明显。</li>
+<li>不需要多线程的锁机制，因为只有一个线程，也不存在同时写变量冲突，在协程中控制共享资源不加锁，只需要判断状态就好了，所以执行效率比多线程高。</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li>降低编码复杂度。尤其是异步编程（callback hell）。</li>
+</ul>
+<ol class="arabic simple" start="3">
+<li><strong>协程相关概念</strong></li>
+</ol>
+<p>由于历史上对于协程定义不够精确，遗留下了开放的、关于协程结构的问题。这导致了协程概念的模糊，造成理解上的困扰。这个问题也部分导致了主流语言一直缺乏对协程的支持。
+甚至在描述一些本质上属于协程的机制时，如Windows的纤程（Fiber），连协程这个术语都很少被提起。</p>
+<p>2004年由Lua的作者Ana Lucia de Moura和Roberto Ierusalimschy所发表的论文Revisiting Coroutines中，才正式对协程进行了分类，论文中依照三个问题区分协程：</p>
+<ul class="simple">
+<li>控制传递（Control-transfer）机制</li>
+</ul>
+<p>总体上分为：对称（Symmetric）协程和非对称（Asymmetric）协程。</p>
+<p>对称协程只提供一种传递操作，用于在协程间直接传递控制；非对称协程（常称为半对称（Semi-symmetric）协程或半（Semi）协程）提供调用和挂起两种操作，挂起时控制返回给调用者。</p>
+<p>两者表达力相同并不意味着在易用性上也相同。对称协程会把程序的控制流变得复杂而难以理解和管理，而非对称协程的行为在某种意义上与函数类似，因为控制总是返回给调用者。使用非对称协程写出的程序更加结构化。</p>
+<p>简单的说：对称协程需要显式指定将控制权yeild给谁，非对称协程可以隐式的转移控制权给它的调用者。</p>
+<ul class="simple">
+<li>协程是否作为语言的第一类（First-class）对象提供</li>
+</ul>
+<p>协程是否作为语言的第一类对象提供对表达力的影响极大。为特定用途而实现的协程，往往把协程对象限制在指定的代码结构中，无法由程序员直接控制。一些语言实现的迭代器和生成器被限制在某个循环内使用，属于受限协程。只有实现为第一类对象的协程可以提供自定义控制结构的能力，而这种能力正是协程强大的表现力所在。</p>
+<ul class="simple">
+<li>协程是否为栈式（Stackful）构造，即是否可以在内部的嵌套调用中挂起</li>
+</ul>
+<p>栈式协程允许在内部的嵌套函数中挂起，恢复时从挂起点继续执行。非栈式协程只能在主体部分执行挂起操作，可以用来开发简单的迭代器或生成器，但遇到复杂些的控制结构时，会把问题搞得更加复杂。例如，如果生成器的生成项是通过递归或辅助函数生成的，必须创建出一系列相应层级结构的辅助生成器连续生成项直到到达原始调用点。非栈式协程也不足以实现用户级多任务。</p>
+<p>是否为第一类对象以及是否为栈式构造，这两个问题决定了协程的能力。</p>
+<p>另外，Revisiting Coroutines一文提出了完全协程的概念，即第一类、栈式的协程对象。随后论证了完全协程的表达力等同于One-shot continuation，Continuation的出现也一定程度上导致了对协程研究的中止，因为普遍认为Continuation的表达力要远超协程。</p>
+<p>如今对协程的研究和应用有重新复苏的趋势，主要集中在两个方向。一个是研究它在协作式多任务管理上相对于多线程的优势，目前以程序库和系统资源的方式提供了一些此类协程。
+另一个就是用于迭代器和生成器的协程，如Perl、C#、Python等。而Lua基于Revisiting Coroutines的观点，实现了完全非对称协，事实也证明了这种机制在实现一些控制结构时异常方便和强大。</p>
 
             </div>
             <!-- /.entry-content -->
